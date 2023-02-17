@@ -1,6 +1,6 @@
 # HomeWorks
 NPGR004 HW
-
+```
 rt004 solution
   -arguments:
     -File/Console:
@@ -12,3 +12,4 @@ rt004 solution
  example C 500 500 hdr
          F [filename]
  -Solution generates hdr/pfm image
+ ```
