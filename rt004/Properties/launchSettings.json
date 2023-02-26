@@ -2,6 +2,7 @@
   "profiles": {
     "rt004": {
       "commandName": "Project",
+      "commandLineArgs": "F C:\\Users\\roman\\Desktop\\jsonTest.json",
       "workingDirectory": "$(ProjectDir)"
     }
   }

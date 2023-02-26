@@ -1,4 +1,9 @@
 ﻿using Util;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.Json;
+using System.Threading.Tasks;
 //using System.Numerics;
 
 namespace rt004
@@ -14,6 +19,13 @@ namespace rt004
     {
         HDR,
         PFM
+    }
+
+    public class Parameter
+    {
+        public int wid { get; set; }
+        public int hei { get; set; }
+        public string format { get; set; }
     }
 
     internal class Program
@@ -34,9 +46,24 @@ namespace rt004
             if (args.Length is > 0)
             {
                 //Read file mode, takes no further arguments
-                if (args[0] == "F" && args.Length == 1)
+                if (args[0] == "F" && args.Length == 2)
                 {
                     //TODO: read info from file;
+                    using FileStream stream = File.OpenRead(args[1]);
+                    string text = File.ReadAllText(args[1]);
+                    Parameter param = JsonSerializer.Deserialize<Parameter>(text);
+                    wid = param.wid;
+                    hei = param.hei;
+                    if (param.format == "hdr")
+                    {
+                        format = ImageFormat.HDR;
+                        fileName = "demo.hdr";
+                    }
+                    else if (param.format == "pfm")
+                    {
+                        format = ImageFormat.PFM;
+                        fileName = "demo.pfm";
+                    }
                 }
                 //Read arguments from command line, takes additional 3 arguments
                 else if (args[0] == "C" && args.Length is  <= 4 and >= 3)
