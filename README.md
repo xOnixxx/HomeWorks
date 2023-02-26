@@ -4,7 +4,7 @@ NPGR004 HW
 rt004 solution
   -arguments:
     -File/Console:
-      F - reading from file (only name of the file as argument) W.I.P
+      F - reading from file with json formating (width, height in int, format hdr/pfm)
       C - reading from arguments (requieres additional arguments)
         - for C option:
         - resolution (int) x y
