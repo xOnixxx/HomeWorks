@@ -8,26 +8,6 @@ using System.Threading.Tasks;
 
 namespace rt004
 {
-
-    enum Mode
-    {
-        FileMode,
-        ConsoleMode,
-    }
-
-    enum ImageFormat
-    {
-        HDR,
-        PFM
-    }
-
-    public class Parameter
-    {
-        public int wid { get; set; }
-        public int hei { get; set; }
-        public string format { get; set; }
-    }
-
     internal class Program
     {
         static void Main(string[] args)
