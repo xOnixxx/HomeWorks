@@ -11,24 +11,27 @@ namespace rt004
     {
         public float width { get; set; }
         public float height { get; set; }
-        public string format { get; set; }
+        public ImageFormat format { get; set; }
         public string outputFile { get; set; }
+        public CameraMode cameraMode { get; set; }
     }
 
     internal class SimpleIMG : IParameter
     {
         public float width { get; set; }
         public float height { get; set; }
-        public string format { get; set; }
+        public ImageFormat format { get; set; }
         public string outputFile { get; set; }
+        public CameraMode cameraMode { get; set;}
     }
 
-    internal class ScneneIMG : IParameter
+    internal class SceneIMG : IParameter
     {
         public float width { get; set; }
         public float height { get; set; }
-        public string format { get; set; }
+        public ImageFormat format { get; set; }
         public string outputFile { get; set; }
+        public CameraMode cameraMode { get; set;}
         public Scene scene { get; set; }
 
     }

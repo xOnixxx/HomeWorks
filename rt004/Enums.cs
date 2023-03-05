@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace rt004
 {
-    enum ImgMode
+    enum LoadMode
     {
         FileMode,
         ConsoleMode,

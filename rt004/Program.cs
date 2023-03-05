@@ -16,9 +16,9 @@ namespace rt004
             int hei = 450;
             string fileName = "demo.pfm";
             ImageFormat format = ImageFormat.PFM;
-            Mode mode = Mode.ConsoleMode;
             // Parameters.
             // TODO: parse command-line arguments and/or your config file.
+            /*
             if (args.Length == 0)
             {
                 Console.WriteLine("Using defualt values");
@@ -31,7 +31,6 @@ namespace rt004
                     //TODO: read info from file;
                     using FileStream stream = File.OpenRead(args[1]);
                     string text = File.ReadAllText(args[1]);
-                    Parameter param = JsonSerializer.Deserialize<Parameter>(text);
                     wid = param.wid;
                     hei = param.hei;
                     if (param.format == "hdr")
@@ -101,6 +100,7 @@ namespace rt004
                 fi.SavePFM(fileName);
                 Console.WriteLine("PFM Image generated");
             }
+            */
         }
     }
 }

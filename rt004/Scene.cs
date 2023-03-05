@@ -9,5 +9,8 @@ namespace rt004
     internal struct Scene
     {
         private ISolids[] scene;
+        private ImageFormat format;
+        public readonly int width;
+        public readonly int height;
     }
 }
