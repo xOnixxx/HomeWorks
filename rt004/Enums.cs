@@ -6,19 +6,19 @@ using System.Threading.Tasks;
 
 namespace rt004
 {
-    enum LoadMode
+    public enum LoadMode
     {
         FileMode,
         ConsoleMode,
     }
 
-    enum CameraMode
+    public enum CameraMode
     {
         Perspective,
         Fish,
         Cylindrical,
     }
-    enum ImageFormat
+    public enum ImageFormat
     {
         HDR,
         PFM

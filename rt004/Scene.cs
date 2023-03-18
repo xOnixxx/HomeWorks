@@ -1,16 +1,20 @@
-﻿using System;
+﻿using OpenTK.Mathematics;
+using System;
 using System.Collections.Generic;
+using System.IO.IsolatedStorage;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace rt004
 {
-    internal struct Scene
+    public class Scene
     {
-        private ISolids[] scene;
-        private ImageFormat format;
-        public readonly int width;
-        public readonly int height;
+        public ISolids[] scene;
+        private void Normalize(Matrix4d transMatrix)
+        {
+
+        }
+
     }
 }

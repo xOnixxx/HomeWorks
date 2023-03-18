@@ -1,38 +1,112 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Numerics;
+using OpenTK.Mathematics;
 using Util;
 
 namespace rt004
 {
-    internal class Camera
+    public class Camera
     {
-        
-        private point3D focusPoint = new point3D(new System.Numerics.Vector3(0,0,0));
+
+        private point3D origin = new point3D(new Vector3d(0,0,0));
+        private Vector3d target;
+        private Vector3d upguide;
+        private double fov;
+        private double aspectRatio;
+
+        private Vector3d forward;
+        private Vector3d up;
+        private Vector3d right;
+
+        private double h;
+        private double w;
+
+
+
+
+        private Vector3d directionVec = new Vector3d(0,0,1);
+        private ImageFormat format;
         private CameraMode mode = CameraMode.Perspective;
-        private angle viewAngle = new angle(AngleType.Degrees, 180);
+        private double camWid = 1080;
+        private double camHei = 1080;
         
+
+
         public FloatImage RenderScene(Scene scene)
         {
-            FloatImage frame = new FloatImage(scene.width, scene.height, 3);
-            for (float x = 0; x < scene.width; x++)
+            double cameraSize = 500;
+            FloatImage frame = new FloatImage((int)camWid, (int)camHei, 3);
+            ray3D ray = new ray3D();
+            ray.origin = origin;
+
+            for (double x = 0; x < camWid; x++)
             {
-                for (float y = 0; y < scene.height; y++)
+                for (double y = 0; y < camHei; y++)
                 {
-                    frame.PutPixel((int)x, (int)y, CastRay(x, y));
+
+                    //WORKS
+                    //ray.origin = new point3D(new Vector3d((x - camWid / 2)/cameraSize, (y - camHei/2)/cameraSize, 0));
+                    //ray.direction = new Vector3d(0,0,1);
+
+
+                    //ray.origin = new point3D(new Vector3d(x - camWid / 2, y - camHei / 2, 0));
+                    //ray.direction = new Vector3d(x-camWid/2 , 0, 1);
+
+                    //CastRay(ray, scene);
+                    //frame.PutPixel((int)x, (int)y, CastRay(ray, scene));
+                    
+
+                    frame.PutPixel((int)x, (int)y,CastRay(MakeRay((2.0d * x) / camWid - 1.0d, (-2.0d * y) / camHei + 1.0d), scene));
+
+                    
                 }
             }
-
-            return new FloatImage(RenderScene(scene));
+            Console.WriteLine("####");
+            return frame;
         }
         
-        private float[] CastRay(float x, float y)
+        private float[] CastRay(ray3D ray, Scene scene)
         {
+            Dictionary<double, ISolids> intersections = new Dictionary<double, ISolids>();
 
-            return new float[] { 0};
+            foreach (ISolids solid in scene.scene)
+            {
+                double? temp = solid.Intersection(ray);
+                if (temp != null)
+                {
+                    intersections.Add((double)solid.Intersection(ray), solid);
+                }
+            }
+            if (intersections.Count() == 0)
+            {
+                return new float[]{ 1,0,0};
+            }
+            float[] color = intersections[intersections.Min(x => x.Key)].color;
+            return color;
+        }
+
+        private ray3D MakeRay(double x, double y)
+        {
+            Vector3d direction = new Vector3d(forward + x * w * right + y * h * up);
+            return new ray3D(origin, Vector3d.Normalize(direction));
+        }
+
+        public Camera(point3D origin, Vector3d target, Vector3d upguide, double fov, double aspectRatio)
+        {
+            this.origin = origin;
+            this.target = target;
+            this.upguide = upguide;
+            this.fov = fov;
+            this.aspectRatio = aspectRatio;
+
+            forward = Vector3d.Normalize(Vector3d.Subtract(target, origin.vector3));
+            //forward = new Vector3d(0, 0, 1);
+            //right = new Vector3d(1, 0, 0);
+            right = Vector3d.Normalize(Vector3d.Cross(forward, upguide));
+            up = Vector3d.Cross(right, forward);
+
+            h = Math.Tan(fov);
+            w = h * aspectRatio;
         }
     }
 

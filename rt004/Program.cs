@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
+using OpenTK.Mathematics;
 //using System.Numerics;
 
 namespace rt004
@@ -13,9 +14,23 @@ namespace rt004
         static void Main(string[] args)
         {
             int wid = 600;
-            int hei = 450;
+            int hei = 600;
             string fileName = "demo.pfm";
             ImageFormat format = ImageFormat.PFM;
+            Scene scene = new Scene();
+            ISolids[] solids = new ISolids[3];
+            Spehere3D sphere = new Spehere3D(new Vector3d(0.5d,0.5d,4), 0.5d, new float[] {0,1,0});
+            Spehere3D sphere2 = new Spehere3D(new Vector3d(0d, 0d, 4), 1d, new float[] { 0, 0, 1 });
+            Plane3D plane = new Plane3D(new point3D(new Vector3d(0, -2, 5)), new Vector3d(0, 1, 0), new float[] { 0, 0, 0 });
+            solids[0] = sphere;
+            solids[1] = sphere2;
+            solids[2] = plane;
+            scene.scene = solids;
+            Camera camera = new Camera(new point3D(new Vector3d(0, 0, 0)), new Vector3d(0d, 0d, 1d), new Vector3d(0,1,0), 25*Math.PI/180, 1080/1080);
+            FloatImage img = camera.RenderScene(scene);
+
+            img.SavePFM(fileName);
+
             // Parameters.
             // TODO: parse command-line arguments and/or your config file.
             /*
