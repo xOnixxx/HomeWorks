@@ -11,6 +11,7 @@ namespace rt004
     public class Scene
     {
         public ISolids[] scene;
+        public ILight[] lights;
         private void Normalize(Matrix4d transMatrix)
         {
 

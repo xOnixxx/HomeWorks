@@ -19,13 +19,18 @@ namespace rt004
             ImageFormat format = ImageFormat.PFM;
             Scene scene = new Scene();
             ISolids[] solids = new ISolids[3];
+            ILight[] lights = new ILight[1];
             Spehere3D sphere = new Spehere3D(new Vector3d(0.5d,0.5d,4), 0.5d, new float[] {0,1,0});
             Spehere3D sphere2 = new Spehere3D(new Vector3d(0d, 0d, 4), 1d, new float[] { 0, 0, 1 });
-            Plane3D plane = new Plane3D(new point3D(new Vector3d(0, -2, 5)), new Vector3d(0, 1, 0), new float[] { 0, 0, 0 });
+            Plane3D plane = new Plane3D(new point3D(new Vector3d(0, -2, 5)), new Vector3d(0, 1, 0), new float[] { 0.5f, 0, 0.3f });
+            Light light = new Light(new point3D(new Vector3d(0, 5, 0)), 1, new float[] { 0.5f, 0, 0 });
+
             solids[0] = sphere;
             solids[1] = sphere2;
             solids[2] = plane;
+            lights[0] = light;
             scene.scene = solids;
+            scene.lights = lights;
             Camera camera = new Camera(new point3D(new Vector3d(0, 0, 0)), new Vector3d(0d, 0d, 1d), new Vector3d(0,1,0), 25*Math.PI/180, 1080/1080);
             FloatImage img = camera.RenderScene(scene);
 

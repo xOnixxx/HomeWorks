@@ -81,8 +81,46 @@ namespace rt004
             {
                 return new float[]{ 1,0,0};
             }
-            float[] color = intersections[intersections.Min(x => x.Key)].color;
+
+            //################################################################
+            float[] color = new float[3];
+            intersections[intersections.Min(x => x.Key)].color.CopyTo(color, 0);
+
+            if (intersections[intersections.Min(x => x.Key)] is Spehere3D)
+            {
+                double distance = intersections.Min(x => x.Key);
+                point3D pointOfInt = new point3D(Vector3d.Multiply(ray.direction, distance));
+                Vector3d normal = Vector3d.Normalize(pointOfInt.vector3 - intersections[intersections.Min(x => x.Key)].origin.vector3);
+                Vector3d ldirection = Vector3d.Normalize(scene.lights[0].origin.vector3 - pointOfInt.vector3);
+                color[0] = 1f * 0.8f * (float)Vector3d.Dot(normal, ldirection) + 0.2f;
+                color[1] = 1f * 0.8f * (float)Vector3d.Dot(normal, ldirection) + 0.2f;
+                color[2] = 1f * 0.8f * (float)Vector3d.Dot(normal, ldirection) + 0.2f;
+
+
+                //Console.WriteLine((float)Vector3d.Dot(normal, ldirection)*0.8);
+            }
+
+            if (intersections[intersections.Min(x => x.Key)] is Plane3D)
+            {
+                double distance = intersections.Min(x => x.Key);
+                point3D pointOfInt = new point3D(Vector3d.Multiply(ray.direction, distance));
+                Vector3d normal = Vector3d.Normalize((intersections[intersections.Min(x => x.Key)] as Plane3D).normal);
+                Vector3d ldirection = Vector3d.Normalize((scene.lights[0].origin.vector3 - pointOfInt.vector3) - 2 * (Vector3d.Normalize(Vector3d.Dot(Vector3d.Subtract(scene.lights[0].origin.vector3, pointOfInt.vector3), normal) * normal)));
+
+                color[0] = 1f * 0.8f * (float)Vector3d.Dot(normal, ldirection) * color[0] + 0.2f * color[0];
+                color[1] = 1f * 0.8f * (float)Vector3d.Dot(normal, ldirection) * color[1] + 0.2f * color[1];
+                color[2] = 1f * 0.8f * (float)Vector3d.Dot(normal, ldirection) * color[2] + 0.2f * color[2];
+                //Console.WriteLine(color[0]);
+            }
+            
+
             return color;
+        }
+
+        private float[] diffuseC(Scene scene, ray3D ray)
+        {
+
+            return new float[] { };
         }
 
         private ray3D MakeRay(double x, double y)
