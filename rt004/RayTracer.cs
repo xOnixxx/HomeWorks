@@ -72,7 +72,7 @@ namespace rt004
         {
 
             double temp = (light.intensity * specCoef * Math.Pow(Vector3d.Dot(refRay, viewRay), material.gloss));
-            return (light.intensity * specCoef * Math.Pow(Vector3d.Dot(refRay, viewRay), material.gloss));
+            return (light.intensity * specCoef * Math.Pow(Vector3d.Dot(refRay, viewRay.Normalized()), material.gloss));
         }
 
         static private float[] OverflowCheck(double[] color)
