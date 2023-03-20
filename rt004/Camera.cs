@@ -43,25 +43,10 @@ namespace rt004
             {
                 for (double y = 0; y < camHei; y++)
                 {
-
-                    //WORKS
-                    //ray.origin = new point3D(new Vector3d((x - camWid / 2)/cameraSize, (y - camHei/2)/cameraSize, 0));
-                    //ray.direction = new Vector3d(0,0,1);
-
-
-                    //ray.origin = new point3D(new Vector3d(x - camWid / 2, y - camHei / 2, 0));
-                    //ray.direction = new Vector3d(x-camWid/2 , 0, 1);
-
-                    //CastRay(ray, scene);
-                    //frame.PutPixel((int)x, (int)y, CastRay(ray, scene));
-                    
-
                     frame.PutPixel((int)x, (int)y,CastRay(MakeRay((2.0d * x) / camWid - 1.0d, (-2.0d * y) / camHei + 1.0d), scene));
-
-                    
                 }
             }
-            Console.WriteLine("####");
+            Console.WriteLine("Image generated");
             return frame;
         }
         
@@ -71,10 +56,10 @@ namespace rt004
 
             foreach (ISolids solid in scene.scene)
             {
-                double? temp = solid.Intersection(ray);
+                double? temp = solid.GetIntersection(ray);
                 if (temp != null)
                 {
-                    intersections.Add((double)solid.Intersection(ray), solid);
+                    intersections.Add((double)solid.GetIntersection(ray), solid);
                 }
             }
             if (intersections.Count() == 0)
@@ -83,36 +68,11 @@ namespace rt004
             }
 
             //################################################################
-            float[] color = new float[3];
+            float[] color = new float[3] { 0,0,0};
+            ISolids close = intersections[intersections.Min(x => x.Key)];
             intersections[intersections.Min(x => x.Key)].color.CopyTo(color, 0);
 
-            if (intersections[intersections.Min(x => x.Key)] is Spehere3D)
-            {
-                double distance = intersections.Min(x => x.Key);
-                point3D pointOfInt = new point3D(Vector3d.Multiply(ray.direction, distance));
-                Vector3d normal = Vector3d.Normalize(pointOfInt.vector3 - intersections[intersections.Min(x => x.Key)].origin.vector3);
-                Vector3d ldirection = Vector3d.Normalize(scene.lights[0].origin.vector3 - pointOfInt.vector3);
-                color[0] = 1f * 0.8f * (float)Vector3d.Dot(normal, ldirection) + 0.2f;
-                color[1] = 1f * 0.8f * (float)Vector3d.Dot(normal, ldirection) + 0.2f;
-                color[2] = 1f * 0.8f * (float)Vector3d.Dot(normal, ldirection) + 0.2f;
-
-
-                //Console.WriteLine((float)Vector3d.Dot(normal, ldirection)*0.8);
-            }
-
-            if (intersections[intersections.Min(x => x.Key)] is Plane3D)
-            {
-                double distance = intersections.Min(x => x.Key);
-                point3D pointOfInt = new point3D(Vector3d.Multiply(ray.direction, distance));
-                Vector3d normal = Vector3d.Normalize((intersections[intersections.Min(x => x.Key)] as Plane3D).normal);
-                Vector3d ldirection = Vector3d.Normalize((scene.lights[0].origin.vector3 - pointOfInt.vector3) - 2 * (Vector3d.Normalize(Vector3d.Dot(Vector3d.Subtract(scene.lights[0].origin.vector3, pointOfInt.vector3), normal) * normal)));
-
-                color[0] = 1f * 0.8f * (float)Vector3d.Dot(normal, ldirection) * color[0] + 0.2f * color[0];
-                color[1] = 1f * 0.8f * (float)Vector3d.Dot(normal, ldirection) * color[1] + 0.2f * color[1];
-                color[2] = 1f * 0.8f * (float)Vector3d.Dot(normal, ldirection) * color[2] + 0.2f * color[2];
-                //Console.WriteLine(color[0]);
-            }
-            
+            color = RayTracer.Phong(intersections[intersections.Min(x => x.Key)], intersections.Min(x => x.Key), scene, ray);
 
             return color;
         }
@@ -138,8 +98,6 @@ namespace rt004
             this.aspectRatio = aspectRatio;
 
             forward = Vector3d.Normalize(Vector3d.Subtract(target, origin.vector3));
-            //forward = new Vector3d(0, 0, 1);
-            //right = new Vector3d(1, 0, 0);
             right = Vector3d.Normalize(Vector3d.Cross(forward, upguide));
             up = Vector3d.Cross(right, forward);
 

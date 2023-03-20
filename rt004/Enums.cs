@@ -23,4 +23,15 @@ namespace rt004
         HDR,
         PFM
     }
+
+    public struct Material
+    {
+        public string name;
+        public double gloss;
+        public Material(string name, double gloss)
+        {
+            this.name = name;
+            this.gloss = gloss;
+        }
+    }
 }
