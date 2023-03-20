@@ -12,6 +12,8 @@ namespace rt004
     {
         public ISolids[] scene;
         public ILight[] lights;
+        public double diffuseC;
+        public double specularC;
         private void Normalize(Matrix4d transMatrix)
         {
 

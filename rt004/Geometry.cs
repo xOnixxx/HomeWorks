@@ -17,10 +17,13 @@ namespace rt004
     //Represents solids which will be saved in the scene, every solid is parametrically described with its parametric function
     public interface ISolids
     {
-        public double? Intersection(ray3D ray);
+        public double? GetIntersection(ray3D ray);
+        public Vector3d GetNormal(point3D pointOfInt);
         public void Transform(Matrix4d transMatrix);
+
         public point3D origin { get; set; }
         public float[] color { get; set; }
+        public Material material { get; set; }
     }
 
     //Used to distinguishe between vector/point
@@ -79,8 +82,9 @@ namespace rt004
 
 
 
-    public class Spehere3D : ISolids
+    public class Sphere3D : ISolids
     {
+        public Material material { get; set; }
         public point3D origin { get; set; }
         public float[] color { get; set; }
         private double radius;
@@ -99,7 +103,7 @@ namespace rt004
             if (x1 < 0 && x2 > 0) { return x2; }
             return Math.Min(x1, x2);
         }
-        public double? Intersection(ray3D ray)
+        public double? GetIntersection(ray3D ray)
         {
             Vector3d d = Vector3d.Subtract(ray.origin.vector3,origin.vector3); 
             double a = Vector3d.Dot(ray.direction, ray.direction);
@@ -109,25 +113,32 @@ namespace rt004
             return t;
         }
 
+        public Vector3d GetNormal(point3D pointOfInt)
+        {
+            return new Vector3d(Vector3d.Normalize(pointOfInt.vector3 - this.origin.vector3));
+        }
+
         public void Transform(Matrix4d transMatrix)
         {
 
         }
-        public Spehere3D(Vector3d origin, double radius, float[] color) 
+        public Sphere3D(Vector3d origin, double radius, float[] color, Material material) 
         {
             this.origin = new point3D(origin);
             this.radius = radius;
             this.color = color;
+            this.material = material;
         }
     }
 
     public class Plane3D : ISolids
     {
+        public Material material { get; set; }
         public point3D origin { get; set; }
         public float[] color { get; set; }
         public Vector3d normal;
 
-        public double? Intersection(ray3D ray)
+        public double? GetIntersection(ray3D ray)
         {
             if (Vector3d.Dot(ray.direction, normal) == 0)
             {
@@ -141,16 +152,22 @@ namespace rt004
             return t;
         }
 
+        public Vector3d GetNormal(point3D pointOfInt)
+        {
+            return this.normal;
+        }
+
         public void Transform(Matrix4d transMatrix)
         {
 
         }
 
-        public Plane3D(point3D origin, Vector3d normal, float[] color)
+        public Plane3D(point3D origin, Vector3d normal, float[] color, Material material)
         {
             this.origin = origin;
             this.normal = normal;
             this.color = color;
+            this.material = material;
         }
     }
 }
