@@ -13,8 +13,6 @@ namespace rt004
     {
         static void Main(string[] args)
         {
-            int wid = 600;
-            int hei = 600;
             string fileName = "demo.pfm";
             ImageFormat format = ImageFormat.PFM;
             Scene scene = new Scene();
@@ -22,10 +20,16 @@ namespace rt004
             ILight[] lights = new ILight[2];
             Material metal = new Material();
             metal.gloss = 10;
+            metal.specCoef = 0.5;
+            metal.diffuseCoef = 0.3;
             Material plastic = new Material();
             plastic.gloss = 5;
+            plastic.specCoef = 0.5;
+            plastic.diffuseCoef = 0.3;
             Material plastic2 = new Material();
-            plastic2.gloss = 100;
+            plastic2.specCoef = 0.6;
+            plastic2.diffuseCoef = 0.5;
+            plastic2.gloss = 300;
             Sphere3D sphere = new Sphere3D(new Vector3d(0.5d,0.5d,3), 0.5d, new float[] {0,1,1}, metal);
             Sphere3D sphere2 = new Sphere3D(new Vector3d(0d, 0d, 4), 1d, new float[] { 0, 0, 1 }, metal);
             Plane3D plane = new Plane3D(new point3D(new Vector3d(0, -2, 5)), new Vector3d(0, 1, 0), new float[] { 0.5f, 0, 0.3f }, plastic2);

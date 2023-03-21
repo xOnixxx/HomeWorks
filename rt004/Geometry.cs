@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 
 namespace rt004
@@ -99,9 +98,9 @@ namespace rt004
             double x1 = (-b + delta) / 2 * a;
             double x2 = c / (a * x1);
 
-            if (x1 < 1.0e-5 && x2 < 1.0e-5) { return null; }
-            if (x1 > 1.0e-5 && x2 < 1.0e-5) { return x1; }
-            if (x1 < 1.0e-5 && x2 > 1.0e-5) { return x2; }
+            if (x1 < RayTracer.EPSILON && x2 < RayTracer.EPSILON) { return null; }
+            if (x1 > RayTracer.EPSILON && x2 < RayTracer.EPSILON) { return x1; }
+            if (x1 < RayTracer.EPSILON && x2 > RayTracer.EPSILON) { return x2; }
 
             return Math.Min(x1, x2);
         }

@@ -3,13 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using static System.Formats.Asn1.AsnWriter;
 
 namespace rt004
 {
     static class RayTracer
     {
+        public const double EPSILON = 1.0e-6;
         //Calculates colors using the Phong functions 
         static public float[] Phong(ISolids solid, double distance, Scene scene, ray3D ray)
         {
@@ -35,7 +34,7 @@ namespace rt004
                 {
 
                     double lightComp = LightDisComp(light, pointOfInt, 0.04d, 0.05d, 1.0e-4d);
-                    Ediff = PhongDiff(light, scene.diffuseC, normal, pointOfInt, ldirection);
+                    Ediff = PhongDiff(light, solid.material, normal, pointOfInt, ldirection);
                     Ediff /= lightComp;
 
                     returnColor[0] += Ediff * matColor[0];
@@ -51,12 +50,6 @@ namespace rt004
                     returnColor[2] += Espec * light.color[2];
                     
                 }
-                /*
-                Ediff = PhongDiff(light, scene.diffuseC, normal, pointOfInt, ldirection);
-                returnColor[0] += Ediff * matColor[0];
-                returnColor[1] += Ediff * matColor[1];
-                returnColor[2] += Ediff * matColor[2];
-                */
 
             }
 
@@ -66,15 +59,15 @@ namespace rt004
             return OverflowCheck(returnColor);
         }
 
-        static private double PhongDiff(ILight light, double diffuseCoef, Vector3d normal, point3D pointOfInt, Vector3d ldirection)
+        static private double PhongDiff(ILight light, Material material, Vector3d normal, point3D pointOfInt, Vector3d ldirection)
         {
-            //Vector3d ldirection = Vector3d.Normalize(light.origin.vector3 - pointOfInt.vector3);
-            return (light.intensity * diffuseCoef * Vector3d.Dot(normal, ldirection) < 0 ? 0 : light.intensity * diffuseCoef * Vector3d.Dot(normal, ldirection));
+            double diffC = material.diffuseCoef;
+            return (light.intensity * diffC * Vector3d.Dot(normal, ldirection) <  EPSILON ? 0 : light.intensity * diffC * Vector3d.Dot(normal, ldirection));
         }
 
         static private double PhongSpec(ILight light, Material material, double specCoef, Vector3d viewRay, Vector3d refRay)
         {
-            return (light.intensity * specCoef * Math.Pow(Vector3d.Dot(refRay, viewRay), material.gloss));
+            return (light.intensity * material.specCoef * Math.Pow(Vector3d.Dot(refRay, viewRay), material.gloss));
 
         }
 
@@ -95,7 +88,7 @@ namespace rt004
             foreach (ISolids solid in scene.scene)
             {
                 double? temp = solid.GetIntersection(ray);
-                if ((temp != null && temp > 1.0e-6) && (temp < lightDistance - 1.0e-6))
+                if ((temp != null && temp > EPSILON) && (temp < lightDistance - EPSILON))
                 {
                     return true;
                 }
