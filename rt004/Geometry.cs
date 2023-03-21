@@ -98,9 +98,9 @@ namespace rt004
             double delta = Math.Sqrt(b * b - 4 * a * c);
             double x1 = (-b + delta) / 2 * a;
             double x2 = c / (a * x1);
-            if (x1 < 0 && x2 < 0) { return null; }
-            if (x1 > 0 && x2 < 0) { return x1; }
-            if (x1 < 0 && x2 > 0) { return x2; }
+            if (x1 < 1.0e-5 && x2 < 1.0e-5) { return null; }
+            if (x1 > 1.0e-5 && x2 < 1.0e-5) { return x1; }
+            if (x1 < 1.0e-5 && x2 > 1.0e-5) { return x2; }
             return Math.Min(x1, x2);
         }
         public double? GetIntersection(ray3D ray)
@@ -108,7 +108,7 @@ namespace rt004
             Vector3d d = Vector3d.Subtract(ray.origin.vector3,origin.vector3); 
             double a = Vector3d.Dot(ray.direction, ray.direction);
             double b = 2 * (Vector3d.Dot(ray.direction, d));
-            double c = Vector3d.Dot(d, d) - radius * radius;
+            double c = Vector3d.Dot(d, d) - radius * radius + 1.0e-6;
             double? t = Quadratic(a, b, c);
             return t;
         }

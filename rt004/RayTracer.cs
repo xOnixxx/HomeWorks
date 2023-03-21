@@ -1,6 +1,7 @@
 ﻿using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -31,10 +32,11 @@ namespace rt004
                 Vector3d ldirection = Vector3d.Normalize(light.origin.vector3 - pointOfInt.vector3);
                 shadowRay.direction = ldirection;
                 //Checks if the ray is blocked by another solid
-                if (!CheckShadow(scene, shadowRay, light))
+                if (!CheckShadow(scene, shadowRay, light, solid))
                 {
-                    
+                    double distanceComp = LightDisComp(light, pointOfInt, 0.04, 0.05, 1.0e-3d);
                     Ediff = PhongDiff(light, scene.diffuseC, normal, pointOfInt, ldirection);
+                    Ediff /= distanceComp;
                     returnColor[0] += Ediff * matColor[0];
                     returnColor[1] += Ediff * matColor[1];
                     returnColor[2] += Ediff * matColor[2];
@@ -42,10 +44,16 @@ namespace rt004
                     
                     Vector3d refRay = 2*normal*(Vector3d.Dot(normal, ldirection)) - ldirection;
                     Espec = PhongSpec(light, solid.material, scene.specularC, ray.direction, refRay);
+                    Espec /= distanceComp;
                     returnColor[0] += Espec * light.color[0];
                     returnColor[1] += Espec * light.color[1];
                     returnColor[2] += Espec * light.color[2];
                     
+                    
+                }
+                else
+                {
+                    //returnColor = new double[] { 1,1,1};
                 }
                 /*
                 Ediff = PhongDiff(light, scene.diffuseC, normal, pointOfInt, ldirection);
@@ -60,6 +68,7 @@ namespace rt004
             returnColor[1] +=  0.2f * matColor[1];
             returnColor[2] +=  0.2f * matColor[2];
             return OverflowCheck(returnColor);
+
         }
 
         static private double PhongDiff(ILight light, double diffuseCoef, Vector3d normal, point3D pointOfInt, Vector3d ldirection)
@@ -71,8 +80,13 @@ namespace rt004
         static private double PhongSpec(ILight light, Material material, double specCoef, Vector3d viewRay, Vector3d refRay)
         {
 
+<<<<<<< Updated upstream
             double temp = (light.intensity * specCoef * Math.Pow(Vector3d.Dot(refRay, viewRay), material.gloss));
             return (light.intensity * specCoef * Math.Pow(Vector3d.Dot(refRay, viewRay.Normalized()), material.gloss));
+=======
+            //double temp = (light.intensity * specCoef * Math.Pow(Vector3d.Dot(refRay, viewRay), material.gloss));
+            return (light.intensity * specCoef * Math.Pow(Vector3d.Dot(refRay, viewRay), material.gloss));
+>>>>>>> Stashed changes
         }
 
         static private float[] OverflowCheck(double[] color)
@@ -85,21 +99,25 @@ namespace rt004
             return returnColor;
         }
 
-        static private bool CheckShadow(Scene scene, ray3D ray, ILight light)
+        static private bool CheckShadow(Scene scene, ray3D ray, ILight light, ISolids thisSolid)
         {
             double lightDistance = Vector3d.Distance(ray.origin.vector3, light.origin.vector3);
-           
+            double? temp;
+
             foreach (ISolids solid in scene.scene)
             {
-                double? temp = solid.GetIntersection(ray);
-                if ((temp != null && temp > 1.0e-6) && (temp < lightDistance - 1.0e-6))
-                {
-                    return true;
-                }
+                temp = solid.GetIntersection(ray);
+                if ((temp != null && temp > 1.0e-5) && (temp < lightDistance - 1.0e-6)) {return true;}
             }
             return false;
         }
 
+        static private double LightDisComp(ILight light, point3D pointOfInt, double c0, double c1, double c2)
+        {
+            double distance = Vector3d.Distance(light.origin.vector3, pointOfInt.vector3);
+            double compensation = c0 + c1*distance + c2*distance*distance;
+            return compensation;
+        }
 
 
 

@@ -43,6 +43,10 @@ namespace rt004
             {
                 for (double y = 0; y < camHei; y++)
                 {
+                    if (x == 365 && y == 507)
+                    {
+                        Console.WriteLine("xxx");
+                    }
                     frame.PutPixel((int)x, (int)y,CastRay(MakeRay((2.0d * x) / camWid - 1.0d, (-2.0d * y) / camHei + 1.0d), scene));
                 }
             }

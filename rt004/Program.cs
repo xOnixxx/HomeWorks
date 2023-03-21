@@ -23,13 +23,13 @@ namespace rt004
             Material metal = new Material();
             metal.gloss = 10;
             Material plastic = new Material();
-            plastic.gloss = 5;
+            plastic.gloss = 500;
             Material plastic2 = new Material();
-            plastic2.gloss = 100;
+            plastic2.gloss = 10;
             Sphere3D sphere = new Sphere3D(new Vector3d(0.5d,0.5d,3), 0.5d, new float[] {0,1,1}, metal);
-            Sphere3D sphere2 = new Sphere3D(new Vector3d(0d, 0d, 4), 1d, new float[] { 0, 0, 1 }, metal);
-            Plane3D plane = new Plane3D(new point3D(new Vector3d(0, -2, 5)), new Vector3d(0, 1, 0), new float[] { 0.5f, 0, 0.3f }, plastic2);
-            Light light = new Light(new point3D(new Vector3d(0, 5, 0)), 1, new float[] { 1f, 1f, 1f });
+            Sphere3D sphere2 = new Sphere3D(new Vector3d(0d, 0d, 4), 1d, new float[] { 0, 0, 1 }, plastic);
+            Plane3D plane = new Plane3D(new point3D(new Vector3d(0, -2, 5)), new Vector3d(0, 1, 0), new float[] { 0.5f, 0, 0.3f }, plastic);
+            Light light = new Light(new point3D(new Vector3d(0, 5, -2)), 1, new float[] { 1f, 1f, 1f });
             Light light2 = new Light(new point3D(new Vector3d(5, 5, 0)), 1, new float[] { 1f, 1f, 1f });
 
             solids[0] = sphere;
@@ -40,7 +40,7 @@ namespace rt004
             scene.scene = solids;
             scene.lights = lights;
             scene.diffuseC = 0.6d;
-            scene.specularC = 0.2d;
+            scene.specularC = 0.4d;
             Camera camera = new Camera(new point3D(new Vector3d(0, 0, 0)), new Vector3d(0d, 0d, 1d), new Vector3d(0,1,0), 25*Math.PI/180, 1080/1080);
             FloatImage img = camera.RenderScene(scene);
 

@@ -26,12 +26,13 @@ namespace rt004
 
     public struct Material
     {
-        public string name;
         public double gloss;
-        public Material(string name, double gloss)
+        public double specC;
+
+        public Material(double gloss, double specC)
         {
-            this.name = name;
             this.gloss = gloss;
+            this.specC = specC;
         }
     }
 }
