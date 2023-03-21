@@ -21,7 +21,7 @@ namespace rt004
             ISolids[] solids = new ISolids[3];
             ILight[] lights = new ILight[2];
             Material metal = new Material();
-            metal.gloss = 10;
+            metal.gloss = 100;
             Material plastic = new Material();
             plastic.gloss = 500;
             Material plastic2 = new Material();

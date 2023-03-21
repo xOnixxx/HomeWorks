@@ -34,9 +34,16 @@ namespace rt004
                 //Checks if the ray is blocked by another solid
                 if (!CheckShadow(scene, shadowRay, light, solid))
                 {
+<<<<<<< Updated upstream
                     double distanceComp = LightDisComp(light, pointOfInt, 0.04, 0.05, 1.0e-3d);
                     Ediff = PhongDiff(light, scene.diffuseC, normal, pointOfInt, ldirection);
                     Ediff /= distanceComp;
+=======
+
+                    double lightComp = LightDisComp(light, pointOfInt, 0.04d, 0.05d, 1.0e-4d);
+                    Ediff = PhongDiff(light, scene.diffuseC, normal, pointOfInt, ldirection);
+                    Ediff /= lightComp;
+>>>>>>> Stashed changes
                     returnColor[0] += Ediff * matColor[0];
                     returnColor[1] += Ediff * matColor[1];
                     returnColor[2] += Ediff * matColor[2];
@@ -44,7 +51,11 @@ namespace rt004
                     
                     Vector3d refRay = 2*normal*(Vector3d.Dot(normal, ldirection)) - ldirection;
                     Espec = PhongSpec(light, solid.material, scene.specularC, ray.direction, refRay);
+<<<<<<< Updated upstream
                     Espec /= distanceComp;
+=======
+                    Espec /= lightComp;
+>>>>>>> Stashed changes
                     returnColor[0] += Espec * light.color[0];
                     returnColor[1] += Espec * light.color[1];
                     returnColor[2] += Espec * light.color[2];
@@ -55,13 +66,6 @@ namespace rt004
                 {
                     //returnColor = new double[] { 1,1,1};
                 }
-                /*
-                Ediff = PhongDiff(light, scene.diffuseC, normal, pointOfInt, ldirection);
-                returnColor[0] += Ediff * matColor[0];
-                returnColor[1] += Ediff * matColor[1];
-                returnColor[2] += Ediff * matColor[2];
-                */
-
             }
 
             returnColor[0] +=  0.2f * matColor[0];
@@ -73,18 +77,20 @@ namespace rt004
 
         static private double PhongDiff(ILight light, double diffuseCoef, Vector3d normal, point3D pointOfInt, Vector3d ldirection)
         {
-            //Vector3d ldirection = Vector3d.Normalize(light.origin.vector3 - pointOfInt.vector3);
             return (light.intensity * diffuseCoef * Vector3d.Dot(normal, ldirection) < 0 ? 0 : light.intensity * diffuseCoef * Vector3d.Dot(normal, ldirection));
         }
 
         static private double PhongSpec(ILight light, Material material, double specCoef, Vector3d viewRay, Vector3d refRay)
         {
+<<<<<<< Updated upstream
 
 <<<<<<< Updated upstream
             double temp = (light.intensity * specCoef * Math.Pow(Vector3d.Dot(refRay, viewRay), material.gloss));
             return (light.intensity * specCoef * Math.Pow(Vector3d.Dot(refRay, viewRay.Normalized()), material.gloss));
 =======
             //double temp = (light.intensity * specCoef * Math.Pow(Vector3d.Dot(refRay, viewRay), material.gloss));
+=======
+>>>>>>> Stashed changes
             return (light.intensity * specCoef * Math.Pow(Vector3d.Dot(refRay, viewRay), material.gloss));
 >>>>>>> Stashed changes
         }
@@ -115,8 +121,12 @@ namespace rt004
         static private double LightDisComp(ILight light, point3D pointOfInt, double c0, double c1, double c2)
         {
             double distance = Vector3d.Distance(light.origin.vector3, pointOfInt.vector3);
+<<<<<<< Updated upstream
             double compensation = c0 + c1*distance + c2*distance*distance;
             return compensation;
+=======
+            return (c0 + c1 * distance + c2 * distance * distance);
+>>>>>>> Stashed changes
         }
 
 
