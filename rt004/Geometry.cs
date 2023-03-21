@@ -103,14 +103,6 @@ namespace rt004
             if (x1 > 1.0e-5 && x2 < 1.0e-5) { return x1; }
             if (x1 < 1.0e-5 && x2 > 1.0e-5) { return x2; }
 
-            if (x1 < 1.0e-6 && x2 < 1.0e-6) { return null; }
-            if (x1 > 1.0e-6 && x2 < 1.0e-6) { return x1; }
-            if (x1 < 1.0e-6 && x2 > 1.0e-6) { return x2; }
->>>>>>> Stashed changes
-            if (x1 < 1.0e-6 && x2 < 1.0e-6) { return null; }
-            if (x1 > 1.0e-6 && x2 < 1.0e-6) { return x1; }
-            if (x1 < 1.0e-6 && x2 > 1.0e-6) { return x2; }
->>>>>>> Stashed changes
             return Math.Min(x1, x2);
         }
         public double? GetIntersection(ray3D ray)
