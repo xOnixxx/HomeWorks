@@ -8,21 +8,23 @@ using System.Threading.Tasks;
 namespace rt004
 {
 
-    public interface ILight
+    public interface ILights
     {
-        public point3D origin { get; set; }
+        public double[] jsonORIGIN { get; set; }
+        public Vector3d origin { get; set; }
         public float[] color { get; set; }
         public double intensity { get; set; }
     }
 
 
-    internal class Light : ILight
+    internal class Light : ILights
     {
-        public point3D origin { set; get; }
+        public double[] jsonORIGIN { get { return new double[] { }; } set { origin = new Vector3d(value[0], value[1], value[2]); } }
+        public Vector3d origin { get; set; }
         public double intensity { get; set; }
         public float[] color { set; get; }
 
-        public Light(point3D origin, float intensity, float[] color)
+        public Light(Vector3d origin, float intensity, float[] color)
         {
             this.origin = origin;
             this.intensity = intensity;

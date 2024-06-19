@@ -1,18 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
+﻿
 using OpenTK.Mathematics;
 using Util;
 
 namespace rt004
 {
-    public class Camera
+    internal class Camera
     {
 
-        private point3D origin = new point3D(new Vector3d(0,0,0));
-        private Vector3d target;
-        private Vector3d upguide;
-        private double fov;
-        private double aspectRatio;
+        private Vector3d origin { get; set; }
+        private Vector3d target { get; set; }
+        private Vector3d upguide { get; set; }
+        private double fov { get; set; }
+        private double aspectRatio { get; set; }
 
         private Vector3d forward;
         private Vector3d up;
@@ -27,81 +26,88 @@ namespace rt004
         private Vector3d directionVec = new Vector3d(0,0,1);
         private ImageFormat format;
         private CameraMode mode = CameraMode.Perspective;
-        private double camWid = 1080;
-        private double camHei = 1080;
+        private double camWid { get; set; }
+        private double camHei { get; set; }
         
 
 
         public FloatImage RenderScene(Scene scene)
         {
-            double cameraSize = 500;
             FloatImage frame = new FloatImage((int)camWid, (int)camHei, 3);
-            ray3D ray = new ray3D();
-            ray.origin = origin;
-
+            Ray ray = new Ray();
+            ray.origin3d = origin;
+            uint rayTracingDepth = 10;
+            //Passes each to be pixel
+            //TODO Anti-Aliasing
+            float[] temp;
             for (double x = 0; x < camWid; x++)
             {
+
+
+
                 for (double y = 0; y < camHei; y++)
-                {
-                    frame.PutPixel((int)x, (int)y,CastRay(MakeRay((2.0d * x) / camWid - 1.0d, (-2.0d * y) / camHei + 1.0d), scene));
+                {               
+                    if (x == 335 && y == 544)
+                    //if (x == 450 && y == 250)
+                    { }
+                    temp = CastRay(MakeRay((2.0d * x) / camWid - 1.0d, (-2.0d * y) / camHei + 1.0d), scene,rayTracingDepth, rayTracingDepth);
+
+                    frame.PutPixel((int)x, (int)y,temp);
                 }
             }
             Console.WriteLine("Image generated");
             return frame;
         }
-        
-        private float[] CastRay(ray3D ray, Scene scene)
+
+
+
+        public static float[] CastRay(Ray ray, Scene scene, uint rayTracingDepth = 0, uint maxDepth = 0,  ISolids self = null, bool inside = false)
         {
-            Dictionary<double, ISolids> intersections = new Dictionary<double, ISolids>();
+            float[] color = new float[3] { 0.7f, 0.3f, 0.6f };
+            ISolids closest = null;
+            Ray transRay = new Ray();
+            Matrix4d reverseTrans = Matrix4d.Identity;
+            double? distance;
 
-            foreach (ISolids solid in scene.scene)
-            {
-                double? temp = solid.GetIntersection(ray);
-                if (temp != null)
-                {
-                    intersections.Add((double)solid.GetIntersection(ray), solid);
-                }
-            }
-            if (intersections.Count() == 0)
-            {
-                return new float[]{ 1,0,0};
-            }
-
-            //################################################################
-            float[] color = new float[3] { 0,0,0};
-            ISolids close = intersections[intersections.Min(x => x.Key)];
-            intersections[intersections.Min(x => x.Key)].color.CopyTo(color, 0);
-
-            color = RayTracer.Phong(intersections[intersections.Min(x => x.Key)], intersections.Min(x => x.Key), scene, ray);
-
+            distance = MathHelp.GetIntersect(ray, scene, out closest, out transRay, out reverseTrans, self);
+            if (distance == null) { return color; }
+            else { color = RayTracer.RayTracing(closest, distance, scene, transRay, reverseTrans, rayTracingDepth, maxDepth, ray); }
+            //Console.WriteLine(ray.direction3d);
             return color;
         }
 
-        private float[] diffuseC(Scene scene, ray3D ray)
-        {
 
-            return new float[] { };
-        }
-
-        private ray3D MakeRay(double x, double y)
+        private Ray MakeRay(double x, double y)
         {
             Vector3d direction = new Vector3d(forward + x * w * right + y * h * up);
-            return new ray3D(origin, Vector3d.Normalize(direction));
+            return new Ray(origin, direction.Normalized());
         }
 
-        public Camera(point3D origin, Vector3d target, Vector3d upguide, double fov, double aspectRatio)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="origin"></param>
+        /// <param name="target"></param>
+        /// <param name="upguide"></param>
+        /// <param name="fov"> In degrees</param>
+        /// <param name="aspectRatio"></param>
+        public Camera(Vector3d origin, double[] target, double[] upguide, double fov, int width, int height)
         {
             this.origin = origin;
-            this.target = target;
-            this.upguide = upguide;
-            this.fov = fov;
-            this.aspectRatio = aspectRatio;
+            this.target = new Vector3d(target[0], target[1], target[2]);
+            this.upguide = new Vector3d(upguide[0], upguide[1], upguide[2]);
+            this.fov = fov*Math.PI/180;
+            this.aspectRatio = width / height;
+            this.camHei = height;
+            this.camWid = width;
 
-            forward = Vector3d.Normalize(Vector3d.Subtract(target, origin.vector3));
-            right = Vector3d.Normalize(Vector3d.Cross(forward, upguide));
-            up = Vector3d.Cross(right, forward);
+            forward = Vector3d.Normalize(Vector3d.Subtract(this.target, origin));
+            
+            up = this.upguide;
+            right = Vector3d.Cross(forward, up).Normalized();
 
-            h = Math.Tan(fov);
+
+            h = Math.Abs(Math.Tan(this.fov));
             w = h * aspectRatio;
         }
     }

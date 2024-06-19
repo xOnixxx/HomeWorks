@@ -24,16 +24,26 @@ namespace rt004
         PFM
     }
 
+    public enum SolidType
+    {
+        Sphere,
+        Plane
+    }
+
     public struct Material
     {
-        public double gloss;
-        public double specCoef;
-        public double diffuseCoef;
-        public Material(double gloss, double specCoef, double diffuseCoef)
+        public double gloss { get; set; }
+        public double specCoef { get; set; }
+        public double diffuseCoef { get; set; }
+        public bool transparent { get; set; }
+        public double transparentCoef { get; set; }
+        public Material(double gloss, double specCoef, double diffuseCoef, bool transparent, double transparentCoef)
         {
             this.gloss = gloss;
             this.specCoef = specCoef;
             this.diffuseCoef = diffuseCoef;
+            this.transparentCoef = transparentCoef;
+            this.transparent = transparent;
         }
     }
 }

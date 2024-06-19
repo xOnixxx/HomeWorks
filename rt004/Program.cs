@@ -2,9 +2,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json;
+//using System.Text.Json;
+using Newtonsoft.Json;
 using System.Threading.Tasks;
 using OpenTK.Mathematics;
+using System.Text.Json.Serialization;
+using System.Numerics;
+using OpenTK.Windowing.Common.Input;
+using System.Xml.Linq;
 //using System.Numerics;
 
 namespace rt004
@@ -13,128 +18,131 @@ namespace rt004
     {
         static void Main(string[] args)
         {
-            string fileName = "demo.pfm";
-            ImageFormat format = ImageFormat.PFM;
+            //Predetermined names for json files
+            string solidsFile = "SolidsConfig.json";
+            string lightsFile = "LightsConfig.json";
+            string camerasFile = "CamerasConfig.json";
+
+
+            string fileName;
+
+            //Reading Json and setting up the scene
+            string json = File.ReadAllText(solidsFile);
+            Console.WriteLine(json);
+
             Scene scene = new Scene();
-            ISolids[] solids = new ISolids[3];
-            ILight[] lights = new ILight[2];
-            Material metal = new Material();
-            metal.gloss = 10;
-            metal.specCoef = 0.5;
-            metal.diffuseCoef = 0.3;
-            Material plastic = new Material();
-            plastic.gloss = 5;
-            plastic.specCoef = 0.5;
-            plastic.diffuseCoef = 0.3;
-            Material plastic2 = new Material();
-            plastic2.specCoef = 0.6;
-            plastic2.diffuseCoef = 0.5;
-            plastic2.gloss = 300;
-            Sphere3D sphere = new Sphere3D(new Vector3d(0.5d,0.5d,3), 0.5d, new float[] {0,1,1}, metal);
-            Sphere3D sphere2 = new Sphere3D(new Vector3d(0d, 0d, 4), 1d, new float[] { 0, 0, 1 }, metal);
-            Plane3D plane = new Plane3D(new point3D(new Vector3d(0, -2, 5)), new Vector3d(0, 1, 0), new float[] { 0.5f, 0, 0.3f }, plastic2);
-            Light light = new Light(new point3D(new Vector3d(0, 5, 0)), 1, new float[] { 1f, 1f, 1f });
-            Light light2 = new Light(new point3D(new Vector3d(5, 5, 0)), 1, new float[] { 1f, 1f, 1f });
+            SolidHierarchy[] solidHierarchies = SetUp.GetComp<SolidHierarchy>(solidsFile);
+            scene.solidHierarchy = solidHierarchies[0];
+            scene.lights = SetUp.GetComp<ILights>(lightsFile);
+            Camera[] camera = SetUp.GetComp<Camera>(camerasFile);
 
-            solids[0] = sphere;
-            solids[1] = sphere2;
-            solids[2] = plane;
-            lights[0] = light;
-            lights[1] = light2;
-            scene.scene = solids;
-            scene.lights = lights;
-            scene.diffuseC = 0.6d;
-            scene.specularC = 0.2d;
-            Camera camera = new Camera(new point3D(new Vector3d(0, 0, 0)), new Vector3d(0d, 0d, 1d), new Vector3d(0,1,0), 25*Math.PI/180, 1080/1080);
-            FloatImage img = camera.RenderScene(scene);
+            int i = 0;
 
-            img.SavePFM(fileName);
 
-            // Parameters.
-            // TODO: parse command-line arguments and/or your config file.
+            //TranslateTest
+            Ray testR = new Ray(new Vector3d(4,-5, 2), new Vector3d(4, 3, 2));
+            //ITransformations testT = new Translate(4, 5, -2);
+
+            //Ray newR = testT.MultiplyL(testR);
+            //Console.WriteLine(newR.origin + "  " + newR.direction);
+
+
+            //solidHierarchies[0].TEST();
+            Node temp = solidHierarchies[0].root;
+            List<Matrix4d> stack = new List<Matrix4d>();
+            Matrix4d tempM = Matrix4d.Identity;
+            Matrix4d tempMInverse = Matrix4d.Identity;
+
+            SolidHierarchy solidHierarchy = scene.solidHierarchy;
+            List<Matrix4d> reverseTransformations = new List<Matrix4d>();  
+            //Matrix which we transform
+            Matrix4d traverseMatrix = Matrix4d.Identity;
+            //Matrix with which we transform traverseMatrix
+            Matrix4d activeMatrix = Matrix4d.Identity;
+
+            while (solidHierarchy.AssertTransforms())
+            {
+                //Traversing to the leaf nodes
+                //Apply inverse matrix of the saved matrices
+                //Save matrix for backtracking into array of reverse transformations
+
+                if (solidHierarchy.Down)
+                {
+
+                    activeMatrix = solidHierarchy.currNode.transformations.tM;
+                    reverseTransformations.Add(activeMatrix.Inverted());
+                    traverseMatrix = Matrix4d.Mult(activeMatrix, traverseMatrix);
+
+                    foreach (ISolids solid in solidHierarchy.currNode.solids)
+                    {
+                        solid.Transform = traverseMatrix;
+                    }
+                }
+                else if (!solidHierarchy.Down)
+                {
+                    activeMatrix = reverseTransformations.Last();
+                    reverseTransformations.RemoveAt(reverseTransformations.Count - 1);
+                    traverseMatrix = Matrix4d.Mult(activeMatrix, traverseMatrix);
+                }
+            }
+
             /*
-            if (args.Length == 0)
+            while (solidHierarchies[0].AssertTransforms())
             {
-                Console.WriteLine("Using defualt values");
-            }
-            if (args.Length is > 0)
-            {
-                //Read file mode, takes no further arguments
-                if (args[0] == "F" && args.Length == 2)
-                {
-                    //TODO: read info from file;
-                    using FileStream stream = File.OpenRead(args[1]);
-                    string text = File.ReadAllText(args[1]);
-                    wid = param.wid;
-                    hei = param.hei;
-                    if (param.format == "hdr")
-                    {
-                        format = ImageFormat.HDR;
-                        fileName = "demo.hdr";
-                    }
-                    else if (param.format == "pfm")
-                    {
-                        format = ImageFormat.PFM;
-                        fileName = "demo.pfm";
-                    }
-                }
-                //Read arguments from command line, takes additional 3 arguments
-                else if (args[0] == "C" && args.Length is  <= 4 and >= 3)
-                {
-                    try
-                    {
-                        wid = int.Parse(args[1]);
-                        hei = int.Parse(args[2]);
-                    }
-                    catch
-                    {
-                        throw new Exception("Invalid resolution arguments.");
-                    }
-                    if (args.Length > 3)
-                    {
-                        if (args[3].ToLower() == "hdr")
-                        {
-                            format = ImageFormat.HDR;
-                            fileName = "demo.hdr";
-                        }
-                        else if (args[3].ToLower() == "pfm")
-                        {
-                            format = ImageFormat.PFM;
-                            fileName = "demo.pfm";
-                        }
-                    }
-                }
-                else
-                {
-                    Console.WriteLine(args[0]);
-                    throw new Exception("Wrong arguments");
-                }
-            }
+                if (!solidHierarchies[0].Down) { 
 
-            // HDR image.
-            FloatImage fi = new FloatImage(wid, hei, 3);
-            // TODO: put anything interesting into the image.
-            // TODO: use fi.PutPixel() function, pixel should be a float[3] array [R, G, B]
-            for (int x = 0; x < wid; x++)
-            {
-                for (int y = 0; y < hei; y++)
-                {
-                    float[] tempC = new float[] { (x * y) % 255, (x * x) % 255, (y * y) % 255 };
-                    fi.PutPixel(x, y, tempC);
-                }
-            }
+                    //Add inverse here
+                    temp.transformations.tM = tempM;
+                    temp.transformations.tmInverse = tempMInverse;
 
-            if (format == ImageFormat.HDR)
-            {
-                fi.SaveHDR(fileName);
-                Console.WriteLine("HDR Image generated");
-            }
-            else if (format == ImageFormat.PFM)
-            {
-                fi.SavePFM(fileName);
-                Console.WriteLine("PFM Image generated");
+                    if (stack.Count() >= 1) {
+
+                        //Add inverse here
+                        tempM =  stack[stack.Count() - 1] * tempM;
+                        tempMInverse = stack[stack.Count() - 1].Inverted() * tempMInverse;
+                    }
+                    stack.RemoveAt(stack.Count() - 1);
+                    foreach (ISolids solid in temp.solids)
+                    {
+                        solid.Transform = temp.transformations;
+                    }
+                }
+                if (solidHierarchies[0].Down) { 
+                    
+                    stack.Add(solidHierarchies[0].currNode.transformations.Inverse());
+                    //Add inverse here
+                    tempM = solidHierarchies[0].currNode.transformations.tM * tempM;
+                    tempMInverse = solidHierarchies[0].currNode.transformations.tM.Inverted() * tempMInverse ;
+
+
+                }
+
+                temp = solidHierarchies[0].currNode;
             }
             */
+
+            SolidHierarchyContainer root = new SolidHierarchyContainer(solidHierarchies[0].root);
+            foreach(Node node in root)
+            {
+                //Console.WriteLine(node.transformations.tM);
+                //Console.WriteLine();
+            }
+
+            while (solidHierarchies[0].AssertTransforms())
+            {
+
+            }
+            Console.WriteLine(i);
+
+
+            foreach (Camera c in camera)
+            {
+                fileName = $"Output/demo{i++}.pfm";
+                FloatImage img = c.RenderScene(scene);
+                img.SavePFM(fileName);
+            }
+            
+            Console.WriteLine("Finnished");
         }
     }
 }

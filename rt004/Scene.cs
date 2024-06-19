@@ -8,12 +8,10 @@ using System.Threading.Tasks;
 
 namespace rt004
 {
-    public class Scene
+    internal class Scene
     {
-        public ISolids[] scene;
-        public ILight[] lights;
-        public double diffuseC;
-        public double specularC;
+        public SolidHierarchy solidHierarchy;
+        public ILights[] lights;
         private void Normalize(Matrix4d transMatrix)
         {
 
