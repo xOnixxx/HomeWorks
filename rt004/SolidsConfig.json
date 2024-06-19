@@ -1,0 +1,180 @@
+[{
+	"$type": "rt004.SolidHierarchy, rt004",
+	"root": {
+		"solids": [],
+		"transformations": {
+			"$type": "rt004.Translate, rt004",
+			"Transformation": [
+				1, 0, 0, 0,
+				0, 1, 0, 0,
+				0, 0, 1, 0,
+				0, 0, 0, 1
+			]
+		},
+		"sons": [
+
+			
+			
+									{
+				"transformations": {
+					"$type": "rt004.Translate, rt004",
+					"Transformation": [
+							1, 0, 0, 0,
+							0, 1, 0, 0,
+							0, 0, 1, 0,
+							0, 0, 0, 1
+					]
+				},
+				"solids": [],
+				"sons": [{
+					"transformations": {
+						"$type": "rt004.Translate, rt004",
+						"Transformation": [
+						1, 0, 0, 1,
+						0, 1, 0, -1,
+						0, 0, 1, 10,
+						0, 0, 0, 1
+						]
+					},
+					"solids": [{
+						"$type": "rt004.Sphere3D, rt004",
+						"origin": {
+							"Origin": [0, 0, 0, 0]
+						},
+						"color": [1, 1, 0],
+						"material": {
+							"gloss": 100,
+							"specCoef": 0.4,
+							"diffuseCoef": 0.4
+						},
+						"size_param": [1]
+					}],
+					"sons": []
+				}]
+			},
+			
+			
+												{
+				"transformations": {
+					"$type": "rt004.Translate, rt004",
+					"Transformation": [
+							1, 0, 0, 0,
+							0, 1, 0, 0,
+							0, 0, 1, 0,
+							0, 0, 0, 1
+					]
+				},
+				"solids": [],
+				"sons": [{
+					"transformations": {
+						"$type": "rt004.Translate, rt004",
+						"Transformation": [
+						1, 0, 0, -1,
+						0, 1, 0, -1,
+						0, 0, 1, 10,
+						0, 0, 0, 1
+						]
+					},
+					"solids": [{
+						"$type": "rt004.Sphere3D, rt004",
+						"origin": {
+							"Origin": [0, 0, 0, 0]
+						},
+						"color": [0, 1, 1],
+						"material": {
+							"gloss": 100,
+							"specCoef": 0.4,
+							"diffuseCoef": 0.4
+						},
+						"size_param": [1]
+					}],
+					"sons": []
+				}]
+			},
+			
+			
+			
+												{
+				"transformations": {
+					"$type": "rt004.Translate, rt004",
+					"Transformation": [
+							1, 0, 0, 0,
+							0, 1, 0, 0,
+							0, 0, 1, 0,
+							0, 0, 0, 1
+					]
+				},
+				"solids": [],
+				"sons": [{
+					"transformations": {
+						"$type": "rt004.Translate, rt004",
+						"Transformation": [
+						1, 0, 0, 0,
+						0, 1, 0, -2,
+						0, 0, 1, 0,
+						0, 0, 0, 1
+						]
+					},
+					"solids": [{
+						"$type": "rt004.Plane3D, rt004",
+						"origin": {
+							"Origin": [0, 0, 0, 0]
+						},
+						"color": [1, 1, 0],
+						"material": {
+							"gloss": 100,
+							"specCoef": 0.4,
+							"diffuseCoef": 0.4
+						},
+						"size_param": [1]
+					}],
+					"sons": []
+				}]
+			},
+			
+			
+
+									{
+				"transformations": {
+					"$type": "rt004.Translate, rt004",
+					"Transformation": [
+							1, 0, 0, 0,
+							0, 1, 0, 0,
+							0, 0, 1, 0,
+							0, 0, 0, 1
+					]
+				},
+				"solids": [],
+				"sons": [{
+					"transformations": {
+						"$type": "rt004.Translate, rt004",
+						"Transformation": [
+						1, 0, 0, 0,
+						0, 1, 0, -1,
+						0, 0, 1, 8,
+						0, 0, 0, 1
+						]
+					},
+					"solids": [{
+						"$type": "rt004.Sphere3D, rt004",
+						"origin": {
+							"Origin": [0, 0, 0, 0]
+						},
+						"color": [0, 0, 0],
+						"material": {
+							"gloss": 100,
+							"specCoef": 0,
+							"diffuseCoef": 0.4,
+							"transparent": true,
+							"trasparentCoef": 1.333
+						},
+						"size_param": [1]
+					}],
+					"sons": []
+				}]
+			}
+			
+
+		]
+	}
+}]

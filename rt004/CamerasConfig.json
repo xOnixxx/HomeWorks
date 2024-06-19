@@ -1,0 +1,74 @@
+[{
+	"$type": "rt004.Camera, rt004",
+	"origin": {
+		"Origin": [
+			0,
+			0,
+			0
+		]
+	},
+	"target": [
+	0,
+	0,
+	1
+	],
+	"upguide": [
+	0,
+	1,
+	0
+	],
+	
+	"fov": 25,
+	"width": 1080,
+	"height": 1080
+},
+{
+	"$type": "rt004.Camera, rt004",
+	"origin": {
+		"Origin": [
+			0,
+			20,
+			0
+		]
+	},
+	"target": [
+	0,
+	-1,
+	0
+	],
+	"upguide": [
+	0,
+	0,
+	1
+	],
+	
+	"fov": 25,
+	"width": 1080,
+	"height": 1080
+},
+{
+	"$type": "rt004.Camera, rt004",
+	"origin": {
+		"Origin": [
+			0,
+			0,
+			0,
+		]
+	},
+	"target": [
+	0,
+	0,
+	-1,
+	],
+	"upguide": [
+	0,
+	1,
+	0,
+	],
+	
+	"fov": 30,
+	"width": 1080,
+	"height": 1080
+}
+
+]
