@@ -152,6 +152,7 @@ namespace rt004
                 node.resetPointer();
             }
             activeNodes.Clear();
+            Reset();
         }
     }
 }

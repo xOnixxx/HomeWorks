@@ -12,7 +12,7 @@ namespace rt004
         private Vector3d origin3d_;
 
 
-        public Ray(Vector3d origin, Vector3d direction) { this.origin3d = origin; this.direction3d = direction; }
+        public Ray(Vector3d origin, Vector3d direction) { this.origin3d = origin; this.direction3d = direction.Normalized(); }
 
     }
 }

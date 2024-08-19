@@ -1,5 +1,9 @@
 ﻿
 using OpenTK.Mathematics;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Drawing;
+using System.Text.Json.Serialization;
 using Util;
 
 namespace rt004
@@ -28,32 +32,95 @@ namespace rt004
         private CameraMode mode = CameraMode.Perspective;
         private double camWid { get; set; }
         private double camHei { get; set; }
-        
 
 
-        public FloatImage RenderScene(Scene scene)
+        [JsonConstructor]
+        public Camera(double[] origin, double[] target, double[] upguide, double fov, int width, int height)
+        {
+            this.origin = new Vector3d(origin[0], origin[1], origin[2]);
+            this.target = new Vector3d(target[0], target[1], target[2]);
+            this.upguide = new Vector3d(upguide[0], upguide[1], upguide[2]);
+            this.fov = fov*Math.PI/180;
+            this.aspectRatio = width / height;
+            this.camHei = height;
+            this.camWid = width;
+
+            forward = Vector3d.Normalize(Vector3d.Subtract(this.target, this.origin));
+            
+            up = this.upguide;
+            right = Vector3d.Cross(forward, up).Normalized();
+
+
+            h = Math.Abs(Math.Tan(this.fov));
+            w = h * aspectRatio;
+        }
+
+
+        public FloatImage RenderScene(Scene scene, Func<Vector2d, int, List<Vector2d>> sampler, int spp = 4)
         {
             FloatImage frame = new FloatImage((int)camWid, (int)camHei, 3);
             Ray ray = new Ray();
             ray.origin3d = origin;
-            uint rayTracingDepth = 10;
+            uint maxDepth = 5;
             //Passes each to be pixel
             //TODO Anti-Aliasing
-            float[] temp;
+            Vector3d temp = Vector3d.Zero;
+            float[] color = new float[3];
+            List<Vector2d> samples = new List<Vector2d>();
+            Vector2d pixelPosition = Vector2d.Zero;
+
             for (double x = 0; x < camWid; x++)
             {
-
-
+                pixelPosition.X = x;
+                int i = (int)Math.Floor(x / camWid * 100);
+                Console.Write($"\rProgress: {i}%");
 
                 for (double y = 0; y < camHei; y++)
                 {               
-                    if (x == 335 && y == 544)
-                    //if (x == 450 && y == 250)
-                    { }
-                    temp = CastRay(MakeRay((2.0d * x) / camWid - 1.0d, (-2.0d * y) / camHei + 1.0d), scene,rayTracingDepth, rayTracingDepth);
+                    pixelPosition.Y = y;
+                    
 
-                    frame.PutPixel((int)x, (int)y,temp);
+                    //TODO Add starting medium (for example camera is underwater
+                    //Generate samples for A-A
+
+                    samples = sampler(pixelPosition, spp);
+                    foreach (Vector2d sample in samples)
+                    {
+                        temp += CastRay(MakeRay((2.0d * sample.X) / camWid - 1.0d, (-2.0d * sample.Y) / camHei + 1.0d), scene, 0, maxDepth)/(double)spp;
+                    }
+
+                    //temp = CastRay(MakeRay((2.0d * x) / camWid - 1.0d, (-2.0d * y) / camHei + 1.0d), scene, 0, maxDepth);
+
+                    color[0] = (float)temp.X;
+                    color[1] = (float)temp.Y;
+                    color[2] = (float)temp.Z;
+
+
+                    frame.PutPixel((int)x, (int)y,color);
+                    temp = Vector3d.Zero;
                 }
+            }
+
+            Console.WriteLine("Image generated");
+
+            
+
+            return frame;
+        }
+
+        public static FloatImage CameraDebugShowNoise(Func<Vector2d, int, List<Vector2d>> sampler, int spp = 256)
+        {
+            FloatImage frame = new FloatImage((int)spp, (int)spp, 3);
+            Vector2d pixelPosition = Vector2d.Zero;
+            List<Vector2d> samples = new List<Vector2d>();
+            samples = sampler(pixelPosition, spp);
+            float[] color = new float[3];
+            color[0] = 1;
+            color[1] = 1;
+            color[2] = 1;
+            foreach (Vector2d sample in samples)
+            {
+                frame.PutPixel((int)(sample.X * spp), (int)(sample.Y * spp), color);
             }
             Console.WriteLine("Image generated");
             return frame;
@@ -61,16 +128,19 @@ namespace rt004
 
 
 
-        public static float[] CastRay(Ray ray, Scene scene, uint rayTracingDepth = 0, uint maxDepth = 0,  ISolids self = null, bool inside = false)
+        public static Vector3d CastRay(Ray ray, Scene scene, uint rayTracingDepth = 0, uint maxDepth = 0,  ISolids self = null, bool inside = false, double n1 = 1)
         {
-            float[] color = new float[3] { 0.7f, 0.3f, 0.6f };
+            //BGR
+            Vector3d color = new Vector3d( 0.7f, 0.3f, 0.6f);
             ISolids closest = null;
             Ray transRay = new Ray();
             Matrix4d reverseTrans = Matrix4d.Identity;
             double? distance;
 
+            //Finds the closest solid, if not return BGR color
             distance = MathHelp.GetIntersect(ray, scene, out closest, out transRay, out reverseTrans, self);
             if (distance == null) { return color; }
+            if (rayTracingDepth > maxDepth) { return new Vector3d(); }
             else { color = RayTracer.RayTracing(closest, distance, scene, transRay, reverseTrans, rayTracingDepth, maxDepth, ray); }
             //Console.WriteLine(ray.direction3d);
             return color;
@@ -91,26 +161,14 @@ namespace rt004
         /// <param name="upguide"></param>
         /// <param name="fov"> In degrees</param>
         /// <param name="aspectRatio"></param>
-        public Camera(Vector3d origin, double[] target, double[] upguide, double fov, int width, int height)
-        {
-            this.origin = origin;
-            this.target = new Vector3d(target[0], target[1], target[2]);
-            this.upguide = new Vector3d(upguide[0], upguide[1], upguide[2]);
-            this.fov = fov*Math.PI/180;
-            this.aspectRatio = width / height;
-            this.camHei = height;
-            this.camWid = width;
-
-            forward = Vector3d.Normalize(Vector3d.Subtract(this.target, origin));
-            
-            up = this.upguide;
-            right = Vector3d.Cross(forward, up).Normalized();
 
 
-            h = Math.Abs(Math.Tan(this.fov));
-            w = h * aspectRatio;
-        }
+
+
+
+
     }
+
 
 
 }

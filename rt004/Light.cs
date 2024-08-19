@@ -1,4 +1,5 @@
-﻿using OpenTK.Mathematics;
+﻿using Newtonsoft.Json;
+using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,7 @@ namespace rt004
     {
         public double[] jsonORIGIN { get; set; }
         public Vector3d origin { get; set; }
-        public float[] color { get; set; }
+        public Vector3d color { get; set; }
         public double intensity { get; set; }
     }
 
@@ -22,13 +23,14 @@ namespace rt004
         public double[] jsonORIGIN { get { return new double[] { }; } set { origin = new Vector3d(value[0], value[1], value[2]); } }
         public Vector3d origin { get; set; }
         public double intensity { get; set; }
-        public float[] color { set; get; }
+        public Vector3d color { set; get; }
 
-        public Light(Vector3d origin, float intensity, float[] color)
+        [JsonConstructor]
+        public Light(Vector3 origin, float intensity, float[] color)
         {
             this.origin = origin;
             this.intensity = intensity;
-            this.color = color;
+            this.color = MathHelp.ArrayToVec(color);
         }
     }
 }

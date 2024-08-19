@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.Design.Serialization;
+﻿using System.ComponentModel;
+using System.ComponentModel.Design.Serialization;
+using System.Drawing;
 using System.IO.IsolatedStorage;
 using System.Text.Json.Serialization;
 using OpenTK.Mathematics;
@@ -7,14 +9,6 @@ using OpenTK.Mathematics;
 namespace rt004
 {
 
-    public enum AngleType
-    {
-        Rad,
-        Degrees,
-    }
-
-
-
     [JsonPolymorphic(
     UnknownDerivedTypeHandling = JsonUnknownDerivedTypeHandling.FallBackToNearestAncestor)]
     [JsonDerivedType(typeof(Sphere3D))]
@@ -22,23 +16,83 @@ namespace rt004
     public interface ISolids
     {
         public double? GetIntersection(Ray ray, bool inside = false);
-        public Vector3d GetNormal(Vector3d pointOfIntersection);
+        public bool GetUnion(Vector3d point, bool inside = false);
+        public Vector3d GetNormal(Vector3d pointOfIntersection, Vector3d incidentDirection);
+        public Vector3d GetTexture(Vector3d pointOfIntersection);
         public Matrix4d Transform { get; set; }
 
         //Center point for calculating the intersection
-        public float[] color { get; set; }
+        public Vector3d color { get; set; }
         public Material material { get; set; }
 
         //We use this to pass the universal components for different size restrictions, i.e radius for sphere, vector parameters for plane etc.
+        //Soon obsolete (transformation matrices will substitute this)
         public double[] size_param { get; set; }
     }
 
+    public abstract class ComplexSolid3D : ISolids
+    {
+        public abstract Matrix4d Transform { get; set; }
+        public abstract Material material { get; set; }
+        public abstract Vector3d color { get; set; }
+        public abstract double[] size_param { get; set; }
+
+        public abstract ISolids[] primitives { get; set; }
+
+
+        public bool GetUnion(Vector3d point, bool inside = false)
+        {
+            foreach (ISolids primitive in primitives)
+            {
+                if (primitive.GetUnion(point, inside)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public double? GetIntersection(Ray ray, bool inside = false)
+        {
+            double? tempDistance = null;
+            double? outDistance = double.MaxValue;
+
+            foreach (ISolids primitive in primitives)
+            {
+                tempDistance = primitive.GetIntersection(ray, inside);
+                if (tempDistance < outDistance && tempDistance > MathHelp.EPSILON)
+                {
+                    outDistance = tempDistance;
+                }
+            }
+            if (outDistance == double.MaxValue)
+            {
+                return null;
+            }
+            return outDistance;
+
+        }
+
+        public Vector3d GetNormal(Vector3d intersection, Vector3d incidentDirection)
+        {
+            foreach (ISolids primitive in primitives)
+            {
+                if (primitive.GetUnion(intersection)) { return primitive.GetNormal(intersection, incidentDirection); }
+                
+            }
+            return Vector3d.Zero;
+        }
+
+        public abstract Vector3d GetTexture(Vector3d pointOfIntersection);
+
+
+
+    }
 
     public class Sphere3D : ISolids
     {
         
         //public point3D origin { get; set; }
-        public float[] color { get; set; }
+        public Vector3d color { get; set; }
         public Material material { get; set; }
         public Matrix4d Transform { get; set; }
         //radius
@@ -79,23 +133,14 @@ namespace rt004
             return Math.Max(x1, x2);
         }
 
-
-        public double? GetIntersection(Ray ray, bool inside = false)
+        //TODO
+        public bool GetUnion(Vector3d point, bool inside = false)
         {
-            //double a = ray.direction3d.LenghtSquared;
-            //double b = 2 * (Vector3d.Dot(ray.direction3d, d));
+            return false;
+        }
 
-            //Vector3d origin = new Vector3d(Transform.tmInverse * new Vector4d(ray.origin3d, 1));
-            //Vector3d direction = new Vector3d(Transform.tmInverse * new Vector4d(ray.direction3d, 0));
-
-            /*
-            Vector3d direction = Vector3d.TransformVector(ray.direction3d, tempM);
-            tempM.Transpose();
-            Vector3d origin = Vector3d.TransformPosition(ray.origin3d, tempM);
-            */
-
-            //Vector3d origin = Vector3d.TransformPosition(ray.origin3d, tempMatrix);
-            //Vector3d direction = Vector3d.TransformVector(ray.direction3d, tempMatrix);
+        public double? GetIntersection(Ray ray, bool further = false)
+        {
 
             Ray viewer = ray;
 
@@ -105,7 +150,7 @@ namespace rt004
             double b = 2 * (Vector3d.Dot(viewer.direction3d, d));
             double c = Vector3d.Dot(d,d) - 1;
             double? t;
-            if (inside)
+            if (further)
             {
                 t = QuadraticMax(a, b, c);
             }
@@ -114,41 +159,234 @@ namespace rt004
                 t = Quadratic(a, b, c);
             }
 
-
-
             return t;
         }
+
         //TODO ADD transformation on the point
-        public Vector3d GetNormal(Vector3d intersection)
+        public Vector3d GetNormal(Vector3d intersection, Vector3d incidentDirection)
         {
 
-            return -Vector3d.Subtract(Vector3d.Zero,intersection).Normalized();
+            return Vector3d.Subtract(intersection, Vector3d.Zero).Normalized();
         }
 
-        
+        public Vector3d GetTexture(Vector3d pointOfIntersection)
+        {
+            return color;
+        }
+
+        internal Sphere3D() { }
+
+        [JsonConstructor]
+        public Sphere3D(float[] color, Material material)
+        {
+            this.color = MathHelp.ArrayToVec(color);
+            this.material = material;
+        }
+
     }
+
+    public class Triangle3D : ISolids
+    {
+        public Matrix4d Transform { get; set; }
+        public Material material { get; set; }
+        public Vector3d color { get; set; }
+        public double[] size_param { get; set; }
+
+        //Vertices for equilateral triangle
+        private Vector3d v0 = new Vector3d(-MathHelp.EQUILATERAL_CONST, -0.5, 0);
+        private Vector3d v1 = new Vector3d(MathHelp.EQUILATERAL_CONST, -0.5, 0);
+        private Vector3d v2 = new Vector3d(0, 1, 0);
+
+        public bool GetUnion(Vector3d point, bool inside = false)
+        {
+            return (MathHelp.TestSameSide(point, v0, v1, v2));
+        }
+
+        /*
+        public double? GetIntersection(Ray ray, bool inside = false)
+        {
+            double result = 0;
+            Vector3d normal = GetNormal(Vector3d.Zero, ray.direction3d);
+
+            // Check if ray and triangle are parallel
+            double dot = Vector3d.Dot(normal, ray.direction3d);
+            if (Math.Abs(dot) < MathHelp.EPSILON) {return null; }
+                
+
+            // Compute intersection t parameter
+            double d = Vector3d.Dot(normal, v0);
+            result = (d - Vector3d.Dot(normal, ray.origin3d)) / dot;
+
+
+
+            if (result <= 0) { return null; }
+
+            // Compute intersection Local point
+            Vector3d P = ray.origin3d + result * ray.direction3d;
+
+
+            // Check if the point is inside the triangle
+            if (GetUnion(P, inside)) {return result; }
+                
+            return null;
+        }
+        */
+
+        //Möller–Trumbore
+        public double? GetIntersection(Ray ray, bool inside = false)
+        {
+            Vector3d e1 = v1 - v0;
+            Vector3d e2 = v2 - v0;
+            Vector3d cross_e2 = Vector3d.Cross(ray.direction3d, e2);
+            double det = Vector3d.Dot(e1, cross_e2);
+
+            if (det > -MathHelp.EPSILON && det < MathHelp.EPSILON) { return null; }
+
+            double inv_det = 1 / det;
+            Vector3d s = ray.origin3d - v0;
+            double u = inv_det * Vector3d.Dot(s, cross_e2);
+            
+            if (u < 0 || u > 1) { return null; }
+
+            Vector3d cross_e1 = Vector3d.Cross(s, e1);
+            double v = inv_det * Vector3d.Dot(ray.direction3d, cross_e1);
+
+            if (v < 0 || u + v > 1) { return null; }
+
+            double t = inv_det * Vector3d.Dot(e2, cross_e1);
+            if (t > MathHelp.EPSILON) { return t; }
+            else { return null; }
+        }
+
+
+        public Vector3d GetTexture(Vector3d pointOfIntersection)
+        {
+            return color;
+        }
+
+
+        public  Vector3d GetNormal(Vector3d intersection, Vector3d incidentDirection)
+        {
+            Vector3d edge1 = v1 - v0;
+            Vector3d edge2 = v2 - v0;
+            Vector3d normal = Vector3d.Cross(edge1, edge2).Normalized();
+            var xx = Vector3d.Dot(normal, incidentDirection);
+            return Vector3d.Dot(normal, incidentDirection) > 0 ? normal : -normal;
+        }
+
+        internal Triangle3D() { }
+        internal Triangle3D(Vector3d v0, Vector3d v1, Vector3d v2)
+        {
+            this.v0 = v0;
+            this.v1 = v1; 
+            this.v2 = v2;
+        }
+
+        [JsonConstructor]
+        public Triangle3D(float[] color, Material material)
+        {
+            this.color = MathHelp.ArrayToVec(color);
+            this.material = material;
+        }
+
+    }
+
+    public class Square3D : ComplexSolid3D
+    {
+        public override Matrix4d Transform { get; set; }
+        public override Material material { get; set; }
+        public override Vector3d color { get; set; }
+        public override double[] size_param { get; set; }
+
+        public override ISolids[] primitives { get; set; }
+            
+
+        public override Vector3d GetTexture(Vector3d pointOfIntersection)
+        {
+            return color;
+        }
+
+        internal Square3D() { }
+        internal Square3D(Vector3d v0, Vector3d v1, Vector3d v2, Vector3d v3){
+          this.primitives = new Triangle3D[2]
+          {new Triangle3D(v0,v1,v2),
+          new Triangle3D(v1,v3,v2)};
+    
+        }
+
+
+        [JsonConstructor]
+        public Square3D(float[] color, Material material)
+        {
+            this.color = MathHelp.ArrayToVec(color);
+            this.material = material;
+            this.primitives = new ISolids[2]
+            {new Triangle3D(new Vector3d(-0.5, -0.5,0),new Vector3d(0.5, -0.5,0),new Vector3d(-0.5, 0.5,0)),
+            new Triangle3D(new Vector3d(0.5, -0.5,0),new Vector3d(0.5, 0.5,0),new Vector3d(-0.5, 0.5,0)) };
+        }
+    }
+
+
+    public class Prism3D : ComplexSolid3D
+    {
+        public override Matrix4d Transform { get; set; }
+        public override Material material { get; set; }
+        public override Vector3d color { get; set; }
+        public override double[] size_param { get; set; }
+
+        public override ISolids[] primitives { get; set; }
+
+
+        public override Vector3d GetTexture(Vector3d pointOfIntersection)
+        {
+            return color;
+        }
+
+        internal Prism3D() { }
+
+        [JsonConstructor]
+        public Prism3D(float[] color, Material material)
+        {
+            this.color = MathHelp.ArrayToVec(color);
+            this.material = material;
+            this.primitives = new ISolids[5]
+            {
+            //Back face
+            new Triangle3D(new Vector3d(-MathHelp.EQUILATERAL_CONST,-0.5,0.5), new Vector3d(MathHelp.EQUILATERAL_CONST,-0.5,0.5),new Vector3d(0,1,0.5)),
+
+            //Front face
+            new Triangle3D( new Vector3d(0,1,-0.5),new Vector3d(MathHelp.EQUILATERAL_CONST,-0.5,-0.5),new Vector3d(-MathHelp.EQUILATERAL_CONST,-0.5,-0.5)),
+            
+            //Left Side
+            new Square3D(new Vector3d(-MathHelp.EQUILATERAL_CONST,-0.5,-0.5), new Vector3d(-MathHelp.EQUILATERAL_CONST,-0.5,0.5),new Vector3d(0,1,-0.5),new Vector3d(0,1,0.5)),
+
+            //Right Side
+            new Square3D(new Vector3d(MathHelp.EQUILATERAL_CONST,-0.5,0.5), new Vector3d(MathHelp.EQUILATERAL_CONST,-0.5,-0.5),new Vector3d(0,1,0.5), new Vector3d(0,1,-0.5)), 
+
+            //Bottom Side
+            new Square3D(new Vector3d(MathHelp.EQUILATERAL_CONST,-0.5,0.5), new Vector3d(MathHelp.EQUILATERAL_CONST,-0.5,-0.5),new Vector3d(-MathHelp.EQUILATERAL_CONST,-0.5,0.5), new Vector3d(-MathHelp.EQUILATERAL_CONST,-0.5,-0.5))
+
+            };
+        }
+    }
+
 
     public class Plane3D : ISolids
     {
         public Matrix4d Transform { get; set; }
         public Material material { get; set; }
-        public float[] color { get; set; }
+        public Vector3d color { get; set; }
         public double[] size_param { get; set; }
         public Vector3d normal = new Vector3d(0, 1, 0);
 
-        public double? GetIntersection(Ray ray, bool inside = false)
+        public bool GetUnion(Vector3d point, bool inside = false)
         {
-            /*
-            Vector3d origin = new Vector3d();
-            double denom = -Vector3d.Dot(origin, -normal);
-            double dotProduct = Vector3d.Dot(-normal, origin);
-            double t = (Vector3d.Dot(-normal, origin) + denom) / Vector3d.Dot(normal, ray.direction);
-            if (dotProduct < RayTracer.EPSILON && t < RayTracer.EPSILON)
-            {
-                return null;
-            }
-            */
+            return false;
+        }
 
+
+        public double? GetIntersection(Ray ray, bool inside = false)
+        { 
             Vector3d origin = new Vector3d(0, 0,0);
             double originCheck = Vector3d.Dot(Vector3d.Subtract(origin, ray.origin3d), normal);
             double bottom = Vector3d.Dot(ray.direction3d, normal);
@@ -157,22 +395,33 @@ namespace rt004
             if (result < 0) { return null; }
             return result;
         }
-        public Vector3d GetNormal(Vector3d intersection)
+        public Vector3d GetNormal(Vector3d intersection, Vector3d incidentDirection)
         {
             //intersection = new Vector3d(Transform.tM * new Vector4d(intersection, 1));
-            return this.normal;
+            return Vector3d.Dot(normal, incidentDirection) > 0 ? normal : -normal;
         }
 
+        public Vector3d GetTexture(Vector3d intersection)
+        {
+            int xi = Math.Abs((int)Math.Floor(intersection.X / 2));
+            int zi = Math.Abs((int)Math.Floor(intersection.Z / 2));
+            if ((xi + zi) % 2 == 0)
+            {
+                return Vector3d.One * 0.1;
+            }
+            else
+            {
+                return Vector3d.One*0.8;
+            }
+        }
 
-        public Plane3D(double[] size_param, float[] color, Material material)
+        [JsonConstructor]
+        public Plane3D(float[] color, Material material)
         {
             this.normal = new Vector3d(0,1,0);//new Vector3d(size_param[0], size_param[1], size_param[2]);
-            this.color = color;
+            this.color = MathHelp.ArrayToVec(color);
             this.material = material;
         }
-        
-        public Plane3D() { }
-
 
     }
 }

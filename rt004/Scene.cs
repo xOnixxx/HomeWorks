@@ -12,10 +12,6 @@ namespace rt004
     {
         public SolidHierarchy solidHierarchy;
         public ILights[] lights;
-        private void Normalize(Matrix4d transMatrix)
-        {
-
-        }
 
     }
 }

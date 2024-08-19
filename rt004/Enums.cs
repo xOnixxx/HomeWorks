@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace rt004
@@ -24,12 +25,6 @@ namespace rt004
         PFM
     }
 
-    public enum SolidType
-    {
-        Sphere,
-        Plane
-    }
-
     public struct Material
     {
         public double gloss { get; set; }
@@ -37,6 +32,8 @@ namespace rt004
         public double diffuseCoef { get; set; }
         public bool transparent { get; set; }
         public double transparentCoef { get; set; }
+
+        [JsonConstructor]
         public Material(double gloss, double specCoef, double diffuseCoef, bool transparent, double transparentCoef)
         {
             this.gloss = gloss;

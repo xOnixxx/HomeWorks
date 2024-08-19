@@ -1,12 +1,10 @@
 [{
 	"$type": "rt004.Camera, rt004",
-	"origin": {
-		"Origin": [
-			0,
-			0,
-			0
-		]
-	},
+	"origin": [
+		0,
+		0,
+		-3
+	],
 	"target": [
 	0,
 	0,
@@ -24,13 +22,11 @@
 },
 {
 	"$type": "rt004.Camera, rt004",
-	"origin": {
-		"Origin": [
-			0,
-			20,
-			0
-		]
-	},
+	"origin": [
+		0,
+		0,
+		0
+	],
 	"target": [
 	0,
 	-1,
@@ -48,13 +44,11 @@
 },
 {
 	"$type": "rt004.Camera, rt004",
-	"origin": {
-		"Origin": [
-			0,
-			0,
-			0,
-		]
-	},
+	"origin": [
+		0,
+		0,
+		0
+	],
 	"target": [
 	0,
 	0,
