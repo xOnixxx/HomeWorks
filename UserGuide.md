@@ -1,11 +1,27 @@
-# This is an <h1> tag
 
-## This is an <h2> tag
 
-### This is an <h3> tag
+# What is Render#
 
-#### This is an <h4> tag
+Render# is photorealistic renderer built using C#. Its supports refractive and reflective surfaces, anti-aliasing. 
 
-##### This is an <h5> tag
+## Features
+- Json compatible
+- Supports solid hierachical scheme
+- HDR output
 
-###### This is an <h6> tag
+## Usage
+The program reads from 3 main config/json files. These are requiered for the run of the program.
+The SolidsConfig contains:
+- The scenes objects as well as their materials, represented in tree structure.
+- Each node has to contain:
+  - Transformation matrix
+  - Types of solids on the node
+
+![test image](./GuideSources/SolidConfig.png)
+
+
+## Download
+### Dependencies:
+-  Newtonsoft.Json v. 13.0
+-  OpenTK 4.7
+
