@@ -38,8 +38,6 @@ This method renders the scene and uses sampling method <b>sampler</b> for sampli
 ### RayTracing
 Gets the color for the ray generated either by the Camera or another ray from RayTracer (reflection/refraction). It has recursive call for the <i>Ray Tracing</i>. If in any of the steps during RayTracing the Ray missed all solids it should return the background colour.
 In future the shading method can be passed to the shader for more extensibility. 
-### Phong
-The most basic shader function with great result.
 ### CheckShadow 
 Returns a multiplier for the shadow. In the case of translucent materials the shadow is not "100%" strong.
 ### GetRefraction
@@ -48,5 +46,5 @@ Gets the color for refracted ray using the fresnel formula.
 ## Scene
 Servers as the container for the scene.
 
-### MathHelp
+## MathHelp
 This is where all the math calculations are implemented. Contains the different sampling methods.
