@@ -2,24 +2,24 @@
 
 # What is Render#
 
-Render# is photorealistic renderer built using C#. Its supports refractive and reflective surfaces, anti-aliasing. 
+Render# is a photorealistic renderer built using C#. It supports refractive ,reflective surfaces and anti-aliasing. 
 
 ## Features
 - Json compatible
-- Supports solid hierachical scheme
+- Supports solid hierarchical scheme
 - HDR output
 
 ## Usage
-The program reads from 3 main config/json files. These are requiered for the run of the program.
+The program reads from 3 main config/json files. These are required for the program to run.
 ### SolidsConfig:
-* The scenes objects as well as their materials, represented in tree structure.
-* Each node has to contain:
+* The scene's objects as well as their materials, represented in a tree structure.
+* Each node must contain:
   + Transformation matrix
   + Types of solids on the node
 * There are currently 6 supported transformations:  
-  + Translate (x,y,z)
+  + Translate (x, y, z)
   + Rotate x/y/z (in degrees x/y/z)
-  + Resize (x,y,z)
+  + Resize (x, y, z)
   + Shear (xy, xz, yz, yx, zx, zy)
 * There are currently 5 supported solids (3 primitive, 2 complex)
   + Primitive: Triangle3D, Sphere3D, Plane3D
@@ -38,12 +38,12 @@ The program reads from 3 main config/json files. These are requiered for the run
 * Resolution and FOV for the camera
 
 ## Output
-We support multiple cameras, each camera generates 1 output image.
+We support multiple cameras, each camera generates one output image.
 The output images are stored in the /Output directory.
 
 
 ## Download
-The dependencies should be installed automatically during the first run of the software. But in the case that it doesn't happen here are the NuGet packages for the Visual Studio.
+The dependencies should be installed automatically during the first run of the software. In case that it doesn't happen here are the NuGet packages for Visual Studio.
 ### Dependencies:
 -  Newtonsoft.Json v. 13.0
 -  OpenTK 4.7
