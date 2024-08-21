@@ -6,12 +6,12 @@ The architecture of the program is straightforward. The camera generates a ray (
 Used to read and parse the Config data into array of \<T> objects from the file.
 
 ## SolidHierarchy
-Used to contain the solids in the scene in tree structure. Contains enumerator for ease of acces to traversing the structure. 
+Used to contain the solids in the scene in tree structure. Contains enumerator for ease of access to traversing the structure. 
 ### AssertTransforms()
 Traverses the tree and creates transformation matrix for each of the solids
 
 ## Controller
-This should be the bridge between the hard backend of the application and possible future frontend. Methods in this class should be simple and straighforward.
+This should be the bridge between the hard backend of the application and possible future frontend. Methods in this class should be simple and straightforward.
 
 ## Transformations
 The transformation matrices are implemented using interface ITransformations for general purpose. BasicTransforms abstract class servers for my specific purpose of transforming the rays and calculating inverse. I have decided to make this split for if other users would implement their own math they can create their own abstract class with specific calculations. 
@@ -32,12 +32,12 @@ The ILight contains jsonORIGIN for Json compatibility because Json doesnt suppor
 
 ## Camera
 ### FloatImage RenderScene(Scene scene, Func\<Vector2d, int, list\<Vector2d>> sampler, int spp = 4)
-This method renders the scene and uses sampling method <b>sampler</b> for sampling in the anti-aliasing. The size of the sampling is defined with <b>spp</b> (samples per pixel). This has grand impact on the performance of the program.
+This method renders the scene and uses sampling method <b>sampler</b> for sampling in the anti-aliasing. The size of the sampling is defined with <b>spp</b> (samples per pixel). This has grand impact on the performance of the program. If the Camera doesn't hit any solid the background colour should be returned.
 
 ## RayTracer
 ### RayTracing
-Gets the color for the ray generated either by the Camera or another ray from RayTracer (reflection/refraction). It has recursive call for the <i>Ray Tracing</i>.
-In future the shading method can be passed to the shader.
+Gets the color for the ray generated either by the Camera or another ray from RayTracer (reflection/refraction). It has recursive call for the <i>Ray Tracing</i>. If in any of the steps during RayTracing the Ray missed all solids it should return the background colour.
+In future the shading method can be passed to the shader for more extensibility. 
 ### Phong
 The most basic shader function with great result.
 ### CheckShadow 
