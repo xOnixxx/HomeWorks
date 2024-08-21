@@ -5,3 +5,6 @@ rt004/.vs/rt004/DesignTimeBuild/.dtbcache.v2
 *.dll
 *.dll
 *.dll
+*obj/
+*.vs/
+*bin/
