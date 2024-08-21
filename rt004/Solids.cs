@@ -1,8 +1,4 @@
-﻿using System.ComponentModel;
-using System.ComponentModel.Design.Serialization;
-using System.Drawing;
-using System.IO.IsolatedStorage;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 using OpenTK.Mathematics;
 
 

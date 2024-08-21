@@ -1,8 +1,5 @@
 ﻿
 using OpenTK.Mathematics;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Drawing;
 using System.Text.Json.Serialization;
 using Util;
 
