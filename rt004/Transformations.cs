@@ -17,7 +17,6 @@ namespace rt004
 
         //Reverse Transformation
         public Ray MultiplyR(Ray ray);
-        //public Matrix4d transform { get; set; }
         public Matrix4d Inverse();
     }
 
@@ -34,8 +33,6 @@ namespace rt004
         //When translating we do not change direction vector
         public Ray MultiplyL(Ray ray)
         {
-            //Vector3d origin = new Vector3d(tM.Inverted() * new Vector4d(ray.origin3d,1));
-            //Vector3d direction = new Vector3d(tM.Inverted() * new Vector4d(ray.direction3d, 0));
             Matrix4d tempMatrix = tM.Inverted();
 
             Vector3d origin = new Vector3d(tempMatrix * new Vector4d(ray.origin3d, 1));
@@ -45,7 +42,6 @@ namespace rt004
             return new Ray(origin, direction);
         }
 
-        //TODO REVERSE
         public Ray MultiplyR(Ray ray)
         {
             Vector3d origin = new Vector3d(tM * new Vector4d(ray.origin3d, 1));

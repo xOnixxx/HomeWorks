@@ -19,7 +19,7 @@
 						"$type": "rt004.Translate, rt004",
 						"x": 1,
 						"y": 0,
-						"z": 2
+						"z": 6
 					},
 					"solids": [{
 						"$type": "rt004.Prism3D, rt004",
@@ -99,7 +99,7 @@
 						"$type": "rt004.Translate, rt004",
 						"x": 1,
 						"y": -1,
-						"z": 6
+						"z": 4
 					},
 					"solids": [{
 						"$type": "rt004.Sphere3D, rt004",

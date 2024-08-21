@@ -202,35 +202,6 @@ namespace rt004
             return (MathHelp.TestSameSide(point, v0, v1, v2));
         }
 
-        /*
-        public double? GetIntersection(Ray ray, bool inside = false)
-        {
-            double result = 0;
-            Vector3d normal = GetNormal(Vector3d.Zero, ray.direction3d);
-
-            // Check if ray and triangle are parallel
-            double dot = Vector3d.Dot(normal, ray.direction3d);
-            if (Math.Abs(dot) < MathHelp.EPSILON) {return null; }
-                
-
-            // Compute intersection t parameter
-            double d = Vector3d.Dot(normal, v0);
-            result = (d - Vector3d.Dot(normal, ray.origin3d)) / dot;
-
-
-
-            if (result <= 0) { return null; }
-
-            // Compute intersection Local point
-            Vector3d P = ray.origin3d + result * ray.direction3d;
-
-
-            // Check if the point is inside the triangle
-            if (GetUnion(P, inside)) {return result; }
-                
-            return null;
-        }
-        */
 
         //Möller–Trumbore
         public double? GetIntersection(Ray ray, bool inside = false)
@@ -333,7 +304,6 @@ namespace rt004
         public override Material material { get; set; }
         public override Vector3d color { get; set; }
         public override double[] size_param { get; set; }
-
         public override ISolids[] primitives { get; set; }
 
 
@@ -397,7 +367,6 @@ namespace rt004
         }
         public Vector3d GetNormal(Vector3d intersection, Vector3d incidentDirection)
         {
-            //intersection = new Vector3d(Transform.tM * new Vector4d(intersection, 1));
             return Vector3d.Dot(normal, incidentDirection) > 0 ? normal : -normal;
         }
 

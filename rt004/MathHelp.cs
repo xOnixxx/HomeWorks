@@ -1,11 +1,4 @@
 ﻿using OpenTK.Mathematics;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Runtime.ExceptionServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace rt004
 {
@@ -72,7 +65,7 @@ namespace rt004
             list[b] = temp;
         }
 
-
+        //Todo add soft shadows
         public static double GetShadowMultiplier(Ray ray, Scene scene, ILights light, ISolids intersected)
         {
             SolidHierarchy hierarchy = scene.solidHierarchy;
@@ -84,16 +77,6 @@ namespace rt004
             double lightDistance = Vector3d.Distance(light.origin, ray.origin3d);
 
             Ray originalRay = ray;
-
-            //Traverse the scene solids
-            //foreach (Node node in container)
-            //{
-            //    ray = RayTransform(ray, intersected.Transform);
-            //    if (node == intersected) 
-            //    { 
-            //        return 0;
-            //    }
-            //}
 
             foreach (Node node in container)
             {

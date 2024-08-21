@@ -18,7 +18,6 @@ namespace rt004
     {
         /*TODOS
          * Refraction inside transparent material
-         * Test transformations
          */
         static void Main(string[] args)
         {

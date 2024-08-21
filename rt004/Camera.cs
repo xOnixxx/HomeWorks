@@ -62,8 +62,7 @@ namespace rt004
             Ray ray = new Ray();
             ray.origin3d = origin;
             uint maxDepth = 5;
-            //Passes each to be pixel
-            //TODO Anti-Aliasing
+
             Vector3d temp = Vector3d.Zero;
             float[] color = new float[3];
             List<Vector2d> samples = new List<Vector2d>();
@@ -81,15 +80,11 @@ namespace rt004
                     
 
                     //TODO Add starting medium (for example camera is underwater
-                    //Generate samples for A-A
-
                     samples = sampler(pixelPosition, spp);
                     foreach (Vector2d sample in samples)
                     {
                         temp += CastRay(MakeRay((2.0d * sample.X) / camWid - 1.0d, (-2.0d * sample.Y) / camHei + 1.0d), scene, 0, maxDepth)/(double)spp;
                     }
-
-                    //temp = CastRay(MakeRay((2.0d * x) / camWid - 1.0d, (-2.0d * y) / camHei + 1.0d), scene, 0, maxDepth);
 
                     color[0] = (float)temp.X;
                     color[1] = (float)temp.Y;
@@ -142,7 +137,6 @@ namespace rt004
             if (distance == null) { return color; }
             if (rayTracingDepth > maxDepth) { return new Vector3d(); }
             else { color = RayTracer.RayTracing(closest, distance, scene, transRay, reverseTrans, rayTracingDepth, maxDepth, ray); }
-            //Console.WriteLine(ray.direction3d);
             return color;
         }
 

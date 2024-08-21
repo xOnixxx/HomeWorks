@@ -1,7 +1,4 @@
 ﻿using OpenTK.Mathematics;
-using System.Drawing;
-using static System.Formats.Asn1.AsnWriter;
-
 
 namespace rt004
 {
@@ -86,10 +83,6 @@ namespace rt004
             Vector3d returnColor = new Vector3d();
 
 
-            //Gives global normal
-
-
-
             foreach (var light in scene.lights)
             {
                 //Global light direction
@@ -108,8 +101,8 @@ namespace rt004
                 NormM.Transpose();
 
                 //Global Intersection
-                //Console.WriteLine("In phong" + original.direction3d);
-                Vector3d view = (original.origin3d - original.direction3d);//(new Vector3d(ReverseTrans * new Vector4d( Vector3d.Normalize(viewer.origin3d - viewer.direction3d),0))).Normalized();
+
+                Vector3d view = (original.origin3d - original.direction3d);
                 view = Vector3d.Normalize(original.origin3d - original.direction3d);
 
 
@@ -119,37 +112,39 @@ namespace rt004
                 double dotDiffuseElement = Vector3d.Dot(solidNormal, lightDir); dotDiffuseElement = dotDiffuseElement > MathHelp.EPSILON ? dotDiffuseElement : 0;
 
 
-                returnColor += light.intensity * solid.material.diffuseCoef * dotDiffuseElement * matColor / lightComp;
+
+                double shadowMultiplier = CheckShadow(scene, new Ray(pointReal, lightDir), light, solid);
+
+                returnColor += light.intensity * solid.material.diffuseCoef * dotDiffuseElement * matColor * shadowMultiplier / lightComp;
 
 
                 lightDir = (Vector3d.Subtract(light.origin, pointReal));
                 Vector3d H = Vector3d.Normalize(lightDir + view);
                 double NdotH = Vector3d.Dot(solidNormal, H);
-                //NdotH = Vector3d.Dot(NdotH, view);
-                //Vector3d NdotH = 2 * solidNormal * Vector3d.Dot(solidNormal, lightDir) - lightDir;
                 double specEl = Math.Pow(NdotH, solid.material.gloss);
 
 
-                if (CheckShadow(scene, new Ray(pointReal, lightDir), light, solid) <= 0.21)
-                {
-                    return new Vector3d(0, 0, 0);
-                }
-            
-
                 if (Vector3d.Dot(solidNormal, lightDir) < 0) { specEl = 0; }
 
-                returnColor += (light.intensity * solid.material.specCoef * specEl * light.color / lightComp);
+                //Specular part
+                if (shadowMultiplier == 0)
+                {
+                    returnColor += (light.intensity * solid.material.specCoef * specEl * light.color / lightComp);
+                }
+
 
                 returnColor += 0.1f * matColor / scene.lights.Length / lightComp;
             }
 
 
-
+            //Diffuse part 
+            //Non reflective surfaces dont have diffuse light
             if (reflectance)
             {
-                returnColor += solid.material.diffuseCoef * matColor;
+                //returnColor += solid.material.diffuseCoef * matColor;
             }
-            returnColor += matColor * 0.2;
+
+            //Ambient "light"
             return returnColor;
         }
 
@@ -161,21 +156,6 @@ namespace rt004
 
         }
 
-        static private double PhongSpec(ILights light, Material material, Vector3d viewRay, Vector3d refRay)
-        {
-
-            if (Vector3d.Dot(refRay, viewRay) < MathHelp.EPSILON)
-            {
-                //Console.WriteLine(Vector3d.Dot(refRay, viewRay));
-                return 0;
-            }
-
-            if (Vector3d.Dot(refRay, Vector3d.Normalize(viewRay)) > MathHelp.EPSILON)
-            {
-                //Console.WriteLine(Vector3d.Dot(refRay, Vector3d.Normalize(viewRay)));
-            }
-            return (light.intensity * material.specCoef * Math.Pow(Vector3d.Dot(refRay, Vector3d.Normalize(viewRay)), material.gloss));
-        }
 
         static private double FresnelSpec(ILights light, Material material, double specCoef, Vector3d viewRay, Vector3d refRay)
         {
@@ -184,9 +164,6 @@ namespace rt004
             return 0;
         }
 
-
-        //TODO if the solids are transparent the shadow is less "dark"
-        //TODO If translucent solid is shadowed by non translucent one
         static private double CheckShadow(Scene scene, Ray ray, ILights light, ISolids intersected)
         {
             return MathHelp.GetShadowMultiplier(ray, scene, light, intersected);
@@ -202,7 +179,6 @@ namespace rt004
 
         private static rayPackage CastRay(Ray ray, Scene scene, out bool fail, bool reflectance, ISolids self, bool inside, double n1)
         {
-
 
             ISolids closest = null;
             Ray transRay = new Ray();
@@ -309,8 +285,6 @@ namespace rt004
                     returnColor = Camera.CastRay(refractedRay, scene, depth, 3, solid, true, closest.material.transparentCoef);
 
 
-
-                    //float[] tempC = Camera.CastRay(refractedRay, scene, rayTracingDepth - 1, maxDepth, solid);
                 }
             }
             return returnColor;

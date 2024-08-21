@@ -12,19 +12,8 @@ namespace rt004
         //Pointer for the BFS
         private int pointer = -1;
         public void resetPointer() { pointer = -1; }
-        //Node Transformation
-        //public Matrix4d transformation;
-
         public ITransformations transformations { get; set; }
         public ISolids[] solids { get; set; }
-
-        /*public double[] Transformation { get { return new double[] { }; } set { this.transformation = new Matrix4d(
-            value[0], value[1], value[2], value[3],
-            value[4], value[5], value[6], value[7],
-            value[8], value[9], value[10], value[11],
-            value[12], value[13], value[14], value[15]
-            ); } }
-        */
 
 
         public Node[]? sons { get; set; }
