@@ -92,23 +92,39 @@ namespace rt004
 
             foreach (Node node in container)
             {
-                foreach (ISolids solid in node.solids)
+                if (node.solids != null)
                 {
-                    ray = RayTransform(ray, solid.Transform);
-
-                    //Do math for transformed ray
-                    if (intersected == solid) { tempDistance = solid.GetIntersection(ray, true); }
-                    else {tempDistance = solid.GetIntersection(ray); }
-                    
-                    //The solid casts shadow
-                    if (tempDistance is not null && lightDistance > tempDistance && tempDistance > EPSILON)
+                    foreach (ISolids solid in node.solids)
                     {
-                        if (!solid.material.transparent) {
-                            return 0.0; }
-                        else { shadowMultiplier *= 0.5; }
+                        ray = RayTransform(ray, solid.Transform);
+
+                        //Do math for transformed ray
+                        if (intersected == solid) { tempDistance = solid.GetIntersection(ray, true); }
+                        else {tempDistance = solid.GetIntersection(ray); }
+
+
+                        if (tempDistance != null && tempDistance is not double.NaN)
+                        {
+                            Vector3d pointLocal = ray.origin3d + ray.direction3d * (double)tempDistance;
+                            // Vector3d pointReal = new Vector3d(ReverseTrans * new Vector4d(point, 1));
+
+                            Vector3d pointGlobal = new Vector3d(solid.Transform * new Vector4d(pointLocal, 1));
+                            tempDistance = Vector3d.Distance(pointGlobal, originalRay.origin3d);
+                        }
+
+
+
+                        //The solid casts shadow
+                        if (tempDistance is not null && lightDistance > tempDistance && tempDistance > EPSILON)
+                        {
+                            if (!solid.material.transparent) {
+                                return 0.0; }
+                            else { shadowMultiplier *= 0.8; }
+                        }
+                        ray = originalRay;
                     }
-                    ray = originalRay;
                 }
+
 
             }
 
@@ -121,8 +137,10 @@ namespace rt004
             SolidHierarchy hierarchy = scene.solidHierarchy;
             SolidHierarchyContainer container = new SolidHierarchyContainer(hierarchy.root);
 
+            double? realDistance = null;
             double? tempDistance = null;
             double? outDistance = double.MaxValue;
+            double? returnDistance = double.MaxValue;
 
             transRay = new Ray();
             closest = new Sphere3D();
@@ -132,44 +150,62 @@ namespace rt004
             //Traverse the scene solids
             foreach (Node node in container)
             {
-                foreach (ISolids solid in node.solids)
-                {   
-                    ray = RayTransform(ray, solid.Transform);
+                if (node.solids != null)
+                {
+                    foreach (ISolids solid in node.solids)
+                    {   
+                        ray = RayTransform(ray, solid.Transform);
                     
-                    if (inside && solid == self)
-                    {
-                        tempDistance = solid.GetIntersection(ray, inside);
-
-                        if (tempDistance < outDistance && tempDistance > EPSILON)
+                        if (inside && solid == self)
                         {
-                            transRay = ray;
-                            outDistance = tempDistance;
-                            closest = solid;
-                            reverseTransform = solid.Transform;
-                        }
-                    }
-                    else 
-                    { 
-                        tempDistance = solid.GetIntersection(ray);
+                            tempDistance = solid.GetIntersection(ray, inside);
 
-                        if (tempDistance < outDistance && tempDistance > EPSILON && solid != self)
-                        {
-                            transRay = ray;
-                            outDistance = tempDistance;
-                            closest = solid;
-                            reverseTransform = solid.Transform;
+                            if (tempDistance < outDistance && tempDistance > EPSILON)
+                            {
+                                transRay = ray;
+                                outDistance = tempDistance;
+                                closest = solid;
+                                reverseTransform = solid.Transform;
+                            }
                         }
+                        else 
+                        { 
+                            tempDistance = solid.GetIntersection(ray);
+
+                            //Transformed point
+                            if (tempDistance != null && tempDistance is not double.NaN)
+                            {
+                                Vector3d pointLocal = ray.origin3d + ray.direction3d*(double)tempDistance;
+                                // Vector3d pointReal = new Vector3d(ReverseTrans * new Vector4d(point, 1));
+
+                                Vector3d pointGlobal = new Vector3d(solid.Transform * new Vector4d(pointLocal, 1));
+                                realDistance = Vector3d.Distance(pointGlobal,originalRay.origin3d);
+                            }
+                            else { realDistance = double.MinValue; }
+                           
+
+
+                            if (realDistance < outDistance && realDistance > EPSILON && solid != self)
+                            {
+                                transRay = ray;
+                                outDistance = realDistance;
+                                returnDistance = tempDistance;
+                                closest = solid;
+                                reverseTransform = solid.Transform;
+                            }
                         
+                        }
+                        ray = originalRay;
                     }
-                    ray = originalRay;
                 }
 
+
             }
-            if (outDistance == double.MaxValue)
+            if (returnDistance == double.MaxValue)
             {
                 return null;
             }
-            return outDistance;
+            return returnDistance;
         }
 
 

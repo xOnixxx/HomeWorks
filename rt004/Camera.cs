@@ -58,7 +58,7 @@ namespace rt004
             FloatImage frame = new FloatImage((int)camWid, (int)camHei, 3);
             Ray ray = new Ray();
             ray.origin3d = origin;
-            uint maxDepth = 5;
+            uint maxDepth = 10;
 
             Vector3d temp = Vector3d.Zero;
             float[] color = new float[3];
@@ -74,7 +74,6 @@ namespace rt004
                 for (double y = 0; y < camHei; y++)
                 {               
                     pixelPosition.Y = y;
-                    
 
                     //TODO Add starting medium (for example camera is underwater
                     samples = sampler(pixelPosition, spp);
@@ -133,7 +132,7 @@ namespace rt004
             distance = MathHelp.GetIntersect(ray, scene, out closest, out transRay, out reverseTrans, self);
             if (distance == null) { return color; }
             if (rayTracingDepth > maxDepth) { return new Vector3d(); }
-            else { color = RayTracer.RayTracing(closest, distance, scene, transRay, reverseTrans, rayTracingDepth, maxDepth, ray); }
+            else { color = RayTracer.RayTracing(closest, distance, scene, transRay, reverseTrans, rayTracingDepth, maxDepth, ray, n1); }
             return color;
         }
 

@@ -154,15 +154,14 @@ namespace rt004
             {
                 t = Quadratic(a, b, c);
             }
-
             return t;
         }
 
         //TODO ADD transformation on the point
         public Vector3d GetNormal(Vector3d intersection, Vector3d incidentDirection)
         {
-
-            return Vector3d.Subtract(intersection, Vector3d.Zero).Normalized();
+            Vector3d normal = Vector3d.Subtract(intersection, Vector3d.Zero).Normalized();
+            return Vector3d.Dot(normal, incidentDirection) > 0 ? normal : -normal;
         }
 
         public Vector3d GetTexture(Vector3d pointOfIntersection)
@@ -353,6 +352,15 @@ namespace rt004
 
         public double? GetIntersection(Ray ray, bool inside = false)
         { 
+            double denom = Vector3d.Dot(normal, ray.direction3d);
+            if (Math.Abs(denom) > MathHelp.EPSILON)
+            {
+                double t = Vector3d.Dot((Vector3d.Zero - ray.origin3d),normal) / denom;
+                if (t >= 0) return t;
+            }
+            return null;
+
+            /*
             Vector3d origin = new Vector3d(0, 0,0);
             double originCheck = Vector3d.Dot(Vector3d.Subtract(origin, ray.origin3d), normal);
             double bottom = Vector3d.Dot(ray.direction3d, normal);
@@ -360,6 +368,7 @@ namespace rt004
             double result = originCheck / bottom;
             if (result < 0) { return null; }
             return result;
+            */
         }
         public Vector3d GetNormal(Vector3d intersection, Vector3d incidentDirection)
         {

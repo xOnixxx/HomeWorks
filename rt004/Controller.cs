@@ -59,10 +59,14 @@ namespace rt004
                     reverseTransformations.Add(activeMatrix.Inverted());
                     traverseMatrix = Matrix4d.Mult(activeMatrix, traverseMatrix);
 
-                    foreach (ISolids solid in scene.solidHierarchy.currNode.solids)
+                    if (scene.solidHierarchy.currNode.solids != null)
                     {
-                        solid.Transform = traverseMatrix;
+                        foreach (ISolids solid in scene.solidHierarchy.currNode.solids)
+                        {
+                            solid.Transform = traverseMatrix;
+                        }
                     }
+
                 }
                 else if (!scene.solidHierarchy.Down)
                 {

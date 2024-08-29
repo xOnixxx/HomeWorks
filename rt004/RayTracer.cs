@@ -127,24 +127,16 @@ namespace rt004
                 if (Vector3d.Dot(solidNormal, lightDir) < 0) { specEl = 0; }
 
                 //Specular part
-                if (shadowMultiplier == 0)
+                if (shadowMultiplier == 1)
                 {
                     returnColor += (light.intensity * solid.material.specCoef * specEl * light.color / lightComp);
                 }
 
-
+                //Ambient "light"
                 returnColor += 0.1f * matColor / scene.lights.Length / lightComp;
             }
 
-
-            //Diffuse part 
-            //Non reflective surfaces dont have diffuse light
-            if (reflectance)
-            {
-                //returnColor += solid.material.diffuseCoef * matColor;
-            }
-
-            //Ambient "light"
+            
             return returnColor;
         }
 
@@ -226,7 +218,7 @@ namespace rt004
             Vector3d returnColor = Vector3d.Zero;
 
             Vector3d TransPoint = transRay.origin3d + transRay.direction3d * (double)pointDistance;
-            Vector3d RealPoint = originalRay.origin3d + originalRay.direction3d * (double)pointDistance;
+            Vector3d RealPoint = new Vector3d(solid.Transform * new Vector4d(TransPoint, 1));
 
             double n = 1;
             double n2 = solid.material.transparentCoef;
@@ -272,18 +264,14 @@ namespace rt004
                 else
                 {
                     //We hit something inside TODO
-                    if (closest != solid)
-                    {
-                        //Vector3d PointInside = RealPoint + refracted * (double)distance;
-                        //originalRay.origin3d = PointInside;
 
-
-                    }
                     //The solid is homogenenous (only consists of itself)
-                    Vector3d PointBack = RealPoint + refracted * (double)distance;
+                    Vector3d localPointBack = TransPoint + refracted * (double)distance;
+                    Vector3d PointBack = new Vector3d(solid.Transform * new Vector4d(localPointBack, 1));
                     originalRay.origin3d = PointBack;
-                    returnColor = Camera.CastRay(refractedRay, scene, depth, 3, solid, true, closest.material.transparentCoef);
 
+                    if (closest != solid){ returnColor = Camera.CastRay(refractedRay, scene, depth, 8, solid, false, closest.material.transparentCoef);}
+                    else {returnColor = Camera.CastRay(refractedRay, scene, depth, 8, solid, true, closest.material.transparentCoef); }
 
                 }
             }

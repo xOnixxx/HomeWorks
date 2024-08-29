@@ -1,65 +1,127 @@
 [{
 	"$type": "rt004.SolidHierarchy, rt004",
-	"root": {
-		"solids": [],
-		"transformations": {
-			"$type": "rt004.Translate, rt004",
-			"x": 0,
-			"y": 0,
-			"z": 0
-		},
-		"sons": [{
-				"transformations": {
+	"root": {"transformations": {
+				"$type": "rt004.Translate, rt004",
+				"x": 0,
+				"y": 0,
+				"z": 0},
+		"sons": [
+			{
+			"transformations": {
+					"$type": "rt004.Resize, rt004",
+					"x": 5,
+					"y": 5,
+					"z": 5
+									},
+			"sons":[{
+					"transformations": {
+					"$type": "rt004.RotateX, rt004",
+					"angle": 90
+									},
+					"sons": [{
+						"transformations": {
+						"$type": "rt004.Translate, rt004",
+						"x": 0,
+						"y": 2.5,
+						"z": 6
+					},
+						"solids": [{
+							"$type": "rt004.Square3D, rt004",
+							"color": [0.6, 0.7, 0],
+							"material": {
+								"gloss": 100,
+								"specCoef": 0.4,
+								"diffuseCoef": 0.4,
+								"transparent": false,
+								"transparentCoef": 1.516}}]}]}]},
+			{
+			"transformations": {
+					"$type": "rt004.Resize, rt004",
+					"x": 5,
+					"y": 5,
+					"z": 5
+									},
+			"sons":[{
+					"transformations": {
 					"$type": "rt004.RotateY, rt004",
 					"angle": 0
-				},
-				"solids": [],
-				"sons": [{
-					"transformations": {
+									},
+					"sons": [{
+						"transformations": {
 						"$type": "rt004.Translate, rt004",
-						"x": 1,
+						"x": 0,
 						"y": 0,
 						"z": 6
 					},
-					"solids": [{
-						"$type": "rt004.Prism3D, rt004",
-						"color": [0.4, 0, 0],
-						"material": {
-							"gloss": 100,
-							"specCoef": 0.4,
-							"diffuseCoef": 0.4,
-							"transparent": false,
-							"transparentCoef": 1.516
-						}
-					}]
-				}]
-			},
+						"solids": [{
+							"$type": "rt004.Square3D, rt004",
+							"color": [1, 0, 0],
+							"material": {
+								"gloss": 100,
+								"specCoef": 0.4,
+								"diffuseCoef": 0.4,
+								"transparent": false,
+								"transparentCoef": 1.516}}]}]}]},
+
 			{
-				"transformations": {
-					"$type": "rt004.RotateX, rt004",
-					"angle": 92
-				},
-				"solids": [],
-				"sons": [{
+			"transformations": {
+					"$type": "rt004.Resize, rt004",
+					"x": 5,
+					"y": 5,
+					"z": 5
+									},
+			"sons":[{
 					"transformations": {
+					"$type": "rt004.RotateY, rt004",
+					"angle": 90
+									},
+					"sons": [{
+						"transformations": {
 						"$type": "rt004.Translate, rt004",
-						"x": -1,
+						"x": -2.5,
 						"y": 0,
-						"z": 4
+						"z": 6
 					},
-					"solids": [{
-						"$type": "rt004.Square3D, rt004",
-						"color": [0.4, 0.75, 0],
-						"material": {
-							"gloss": 100,
-							"specCoef": 0.4,
-							"diffuseCoef": 0.4,
-							"transparent": false,
-							"transparentCoef": 1.516
-						}
-					}]
-				}]
-			},
+						"solids": [{
+							"$type": "rt004.Square3D, rt004",
+							"color": [0, 0, 1],
+							"material": {
+								"gloss": 100,
+								"specCoef": 0.4,
+								"diffuseCoef": 0.4,
+								"transparent": false,
+								"transparentCoef": 1.516}}]}]}]},
+								
+			{
+			"transformations": {
+					"$type": "rt004.Resize, rt004",
+					"x": 5,
+					"y": 5,
+					"z": 5
+									},
+			"sons":[{
+					"transformations": {
+					"$type": "rt004.RotateY, rt004",
+					"angle": 90
+									},
+					"sons": [{
+						"transformations": {
+						"$type": "rt004.Translate, rt004",
+						"x": 2.5,
+						"y": 0,
+						"z": 6
+					},
+						"solids": [{
+							"$type": "rt004.Square3D, rt004",
+							"color": [0, 1, 0],
+							"material": {
+								"gloss": 100,
+								"specCoef": 0.4,
+								"diffuseCoef": 0.4,
+								"transparent": false,
+								"transparentCoef": 1.516}}]}]}]},
+			
+			
 						{
 				"transformations": {
 					"$type": "rt004.RotateZ, rt004",
@@ -70,7 +132,7 @@
 					"transformations": {
 						"$type": "rt004.Translate, rt004",
 						"x": 0,
-						"y": -2,
+						"y": -1,
 						"z": 0
 					},
 					"solids": [{
@@ -89,7 +151,35 @@
 						{
 				"transformations": {
 					"$type": "rt004.Resize, rt004",
-					"x": 1.3,
+					"x": 0.5,
+					"y": 0.5,
+					"z": 0.5
+				},
+				"solids": [],
+				"sons": [{
+					"transformations": {
+						"$type": "rt004.Translate, rt004",
+						"x": 2,
+						"y": 1,
+						"z": 6
+					},
+					"solids": [{
+						"$type": "rt004.Sphere3D, rt004",
+						"color": [0, 0, 0],
+						"material": {
+							"gloss": 100,
+							"specCoef": 0.4,
+							"diffuseCoef": 0.4,
+							"transparent": true,
+							"transparentCoef": 1.9
+						}
+					}]
+				}]
+			},
+									{
+				"transformations": {
+					"$type": "rt004.Resize, rt004",
+					"x": 1,
 					"y": 1,
 					"z": 1
 				},
@@ -97,19 +187,45 @@
 				"sons": [{
 					"transformations": {
 						"$type": "rt004.Translate, rt004",
-						"x": 1,
-						"y": -1,
-						"z": 4
+						"x": 0,
+						"y": 1,
+						"z": 6
 					},
 					"solids": [{
 						"$type": "rt004.Sphere3D, rt004",
-						"color": [0.4, 0.75, 0.3],
+						"color": [0, 0, 0],
 						"material": {
 							"gloss": 100,
 							"specCoef": 0.4,
 							"diffuseCoef": 0.4,
-							"transparent": false,
+							"transparent": true,
 							"transparentCoef": 1.516
+						}
+					}]
+				}]
+			},
+			{
+				"transformations": {
+					"$type": "rt004.RotateY, rt004",
+					"angle": 67
+				},
+				"solids": [],
+				"sons": [{
+					"transformations": {
+						"$type": "rt004.Translate, rt004",
+						"x": -1,
+						"y": -1,
+						"z": 5
+					},
+					"solids": [{
+						"$type": "rt004.Prism3D, rt004",
+						"color": [0.3, 0.4, 0.15],
+						"material": {
+							"gloss": 100,
+							"specCoef": 0.4,
+							"diffuseCoef": 0.4,
+							"transparent": true,
+							"transparentCoef": 1.3
 						}
 					}]
 				}]
