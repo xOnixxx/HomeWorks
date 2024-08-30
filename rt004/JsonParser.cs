@@ -19,7 +19,7 @@ namespace rt004
                 return JsonConvert.DeserializeObject<T[]>(json, new JsonSerializerSettings()
                 {
                     TypeNameHandling = TypeNameHandling.All,
-                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                    //ReferenceLoopHandling = ReferenceLoopHandling.Ignore
                 })!;
             }
             catch

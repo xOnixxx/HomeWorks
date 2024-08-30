@@ -3,43 +3,38 @@ using Util;
 
 namespace rt004
 {
-    internal class Controller
+    internal static class Controller
     {
 
-        public Controller()
-        {
-
-        }
-
-        public string solidsFile { get; set; } = "SolidsConfig.json";
-        public string lightsFile { get; set; } = "LightsConfig.json";
-        public string camerasFile { get; set; } = "CamerasConfig.json";
+        private static string solidsFile { get; set; } = "SolidsConfig.json";
+        private static string lightsFile { get; set; } = "LightsConfig.json";
+        private static string camerasFile { get; set; } = "CamerasConfig.json";
 
 
-        private Scene scene = new Scene();
-        private Camera[] camera;
+        private static Scene scene = new Scene();
+        private static Camera[] camera;
 
 
-        public void LoadFromJson()
+        public static void LoadFromJson()
         {
             GenerateScene();
             GenerateHierarchy();
             GenerateCamera();
         }
 
-        public void GenerateScene()
+        public static void GenerateScene()
         {
             SolidHierarchy[] solidHierarchies = SetUp.GetComp<SolidHierarchy>(solidsFile);
             scene.solidHierarchy = solidHierarchies[0];
             scene.lights = SetUp.GetComp<ILights>(lightsFile);
         }
 
-        public void GenerateCamera()
+        public static void GenerateCamera()
         {
             camera = SetUp.GetComp<Camera>(camerasFile);
         }
 
-        private void GenerateHierarchy()
+        private static void GenerateHierarchy()
         {
             List<Matrix4d> reverseTransformations = new List<Matrix4d>();
 
@@ -83,7 +78,7 @@ namespace rt004
 
         }
 
-        public void GenerateCaptures()
+        public static void GenerateCaptures()
         {
             string fileName;
             int i = 0;

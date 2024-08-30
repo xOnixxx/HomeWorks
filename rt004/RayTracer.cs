@@ -140,22 +140,6 @@ namespace rt004
             return returnColor;
         }
 
-        static private double PhongDiff(ILights light, Material material, Vector3d normal, Vector3d ldirection)
-        {
-            double diffC = material.diffuseCoef;
-            double x = light.intensity * diffC * Vector3d.Dot(normal, ldirection);
-            return (x < MathHelp.EPSILON ? 0 : x);
-
-        }
-
-
-        static private double FresnelSpec(ILights light, Material material, double specCoef, Vector3d viewRay, Vector3d refRay)
-        {
-            double S = Vector3d.Dot(refRay, viewRay);
-            //double Sh = S/(material)
-            return 0;
-        }
-
         static private double CheckShadow(Scene scene, Ray ray, ILights light, ISolids intersected)
         {
             return MathHelp.GetShadowMultiplier(ray, scene, light, intersected);
@@ -163,7 +147,7 @@ namespace rt004
 
         static private double LightDisComp(ILights light, Vector3d intersection, double c0, double c1, double c2)
         {
-            double distance = Vector3d.Distance(light.origin, intersection);//Vector4d.Distance(light.origin.origin, pointOfInt.origin);
+            double distance = Vector3d.Distance(light.origin, intersection);
             return (c0 + c1 * distance + c2 * distance * distance);
         }
 
