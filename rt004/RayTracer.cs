@@ -45,12 +45,20 @@ namespace rt004
             //Ray tracing
             //Get new ray
 
-            Ray reflectedRay = ReflectRay(originalRay, transRay, distance, reverseTrans, solid);
-            rayPackage = CastRay(reflectedRay, scene, out failState, false, solid, false, n1);
-            if (!failState && rayTracingDepth < maxDepth)
+            if (!solid.material.transparent)
             {
-                returnColor += RayTracing(rayPackage.solid, rayPackage.distance, scene, rayPackage.transRay, rayPackage.trans, rayTracingDepth, maxDepth, rayPackage.originalRay, n1) / Math.Pow(3, rayTracingDepth + 1);
+                Ray reflectedRay = ReflectRay(originalRay, transRay, distance, reverseTrans, solid);
+                rayPackage = CastRay(reflectedRay, scene, out failState, false, solid, false, n1);
+                if (!failState && rayTracingDepth < maxDepth)
+                {
+                    //returnColor += RayTracing(rayPackage.solid, rayPackage.distance, scene, rayPackage.transRay, rayPackage.trans, rayTracingDepth, maxDepth, rayPackage.originalRay, n1) / Math.Pow(3, rayTracingDepth + 1);
+                }
             }
+            else
+            {
+                var x = "y";
+            }
+
             
             
             
@@ -77,7 +85,7 @@ namespace rt004
             Vector3d point = viewer.origin3d + viewer.direction3d * (double)distance;
 
             Vector3d pointReal = new Vector3d(ReverseTrans * new Vector4d(point, 1));
-            Vector3d matColor = solid.GetTexture(pointReal);
+            Vector3d matColor = solid.GetTexture(point);
 
             //Ambient Light
             Vector3d returnColor = new Vector3d();
@@ -199,6 +207,7 @@ namespace rt004
 
         private static Vector3d GetRefraction(ISolids solid, Ray originalRay, Ray transRay, Matrix4d reverseTrans, double pointDistance, Scene scene, double n1, uint depth)
         {
+
             Vector3d returnColor = Vector3d.Zero;
 
             Vector3d TransPoint = transRay.origin3d + transRay.direction3d * (double)pointDistance;
@@ -235,7 +244,7 @@ namespace rt004
 
                 ISolids closest;
                 Vector3d refracted = n * originalRay.direction3d + (n * cosI - cosT) * solidNormal;
-                Ray refractedRay = new Ray(RealPoint, refracted);
+                Ray refractedRay = new Ray(RealPoint, -refracted);
 
                 double? distance = MathHelp.GetIntersect(refractedRay, scene, out closest, out transRay, out reverseTrans, solid, (n1 != n2));
 

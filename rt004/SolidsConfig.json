@@ -33,13 +33,16 @@
 								"specCoef": 0.4,
 								"diffuseCoef": 0.4,
 								"transparent": false,
-								"transparentCoef": 1.516}}]}]}]},
+								"transparentCoef": 1.516,
+								"albedo": "Textures\\AlbedoWall512",
+								"normals": "Textures\\NormalWall512"
+								}}]}]}]},
 			{
 			"transformations": {
 					"$type": "rt004.Resize, rt004",
-					"x": 5,
-					"y": 5,
-					"z": 5
+					"x": 3,
+					"y": 3,
+					"z": 3
 									},
 			"sons":[{
 					"transformations": {
@@ -61,7 +64,10 @@
 								"specCoef": 0.4,
 								"diffuseCoef": 0.4,
 								"transparent": false,
-								"transparentCoef": 1.516}}]}]}]},
+								"transparentCoef": 1.516,
+								"albedo": "Textures\\AlbedoWall512",
+								"normals": "Textures\\NormalWall512"
+								}}]}]}]},
 
 			{
 			"transformations": {
@@ -90,7 +96,10 @@
 								"specCoef": 0.4,
 								"diffuseCoef": 0.4,
 								"transparent": false,
-								"transparentCoef": 1.516}}]}]}]},
+								"transparentCoef": 1.516,
+								"albedo": "Textures\\AlbedoWall512",
+								"normals": "Textures\\NormalWall512"
+								}}]}]}]},
 								
 			{
 			"transformations": {
@@ -119,7 +128,10 @@
 								"specCoef": 0.4,
 								"diffuseCoef": 0.4,
 								"transparent": false,
-								"transparentCoef": 1.516}}]}]}]},
+								"transparentCoef": 1.516,
+								"albedo": "Textures\\AlbedoDebug",
+								"normals": "Textures\\NormalWall512"
+								}}]}]}]},
 			
 			
 						{
@@ -151,34 +163,6 @@
 						{
 				"transformations": {
 					"$type": "rt004.Resize, rt004",
-					"x": 0.5,
-					"y": 0.5,
-					"z": 0.5
-				},
-				"solids": [],
-				"sons": [{
-					"transformations": {
-						"$type": "rt004.Translate, rt004",
-						"x": 2,
-						"y": 1,
-						"z": 6
-					},
-					"solids": [{
-						"$type": "rt004.Sphere3D, rt004",
-						"color": [0, 0, 0],
-						"material": {
-							"gloss": 100,
-							"specCoef": 0.4,
-							"diffuseCoef": 0.4,
-							"transparent": true,
-							"transparentCoef": 1.9
-						}
-					}]
-				}]
-			},
-									{
-				"transformations": {
-					"$type": "rt004.Resize, rt004",
 					"x": 1,
 					"y": 1,
 					"z": 1
@@ -189,7 +173,7 @@
 						"$type": "rt004.Translate, rt004",
 						"x": 0,
 						"y": 1,
-						"z": 6
+						"z": 3
 					},
 					"solids": [{
 						"$type": "rt004.Sphere3D, rt004",
@@ -199,6 +183,34 @@
 							"specCoef": 0.4,
 							"diffuseCoef": 0.4,
 							"transparent": true,
+							"transparentCoef": 1.6
+						}
+					}]
+				}]
+			},
+									{
+				"transformations": {
+					"$type": "rt004.Resize, rt004",
+					"x": 3,
+					"y": 3,
+					"z": 3
+				},
+				"solids": [],
+				"sons": [{
+					"transformations": {
+						"$type": "rt004.Translate, rt004",
+						"x": 0,
+						"y": 1,
+						"z": -6
+					},
+					"solids": [{
+						"$type": "rt004.Square3D, rt004",
+						"color": [0, 1, 0],
+						"material": {
+							"gloss": 100,
+							"specCoef": 0.4,
+							"diffuseCoef": 0.4,
+							"transparent": false,
 							"transparentCoef": 1.516
 						}
 					}]
@@ -218,13 +230,13 @@
 						"z": 5
 					},
 					"solids": [{
-						"$type": "rt004.Prism3D, rt004",
+						"$type": "rt004.Triangle3D, rt004",
 						"color": [0.3, 0.4, 0.15],
 						"material": {
 							"gloss": 100,
 							"specCoef": 0.4,
 							"diffuseCoef": 0.4,
-							"transparent": true,
+							"transparent": false,
 							"transparentCoef": 1.3
 						}
 					}]

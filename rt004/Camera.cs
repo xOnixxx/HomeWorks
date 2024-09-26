@@ -53,7 +53,7 @@ namespace rt004
         }
 
 
-        public FloatImage RenderScene(Scene scene, Func<Vector2d, int, List<Vector2d>> sampler, int spp = 4)
+        public FloatImage RenderScene(Scene scene, Func<Vector2d, int, List<Vector2d>> sampler, int spp = 8)
         {
             FloatImage frame = new FloatImage((int)camWid, (int)camHei, 3);
             Ray ray = new Ray();

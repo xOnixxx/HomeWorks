@@ -32,15 +32,21 @@ namespace rt004
         public double diffuseCoef { get; set; }
         public bool transparent { get; set; }
         public double transparentCoef { get; set; }
+        public string albedo {  get; set; }
+        public string normals { get; set; }
+
 
         [JsonConstructor]
-        public Material(double gloss, double specCoef, double diffuseCoef, bool transparent, double transparentCoef)
+        public Material(double gloss, double specCoef, double diffuseCoef, bool transparent, double transparentCoef, string albedo, string normals)
         {
             this.gloss = gloss;
             this.specCoef = specCoef;
             this.diffuseCoef = diffuseCoef;
             this.transparentCoef = transparentCoef;
             this.transparent = transparent;
+
+            this.albedo = albedo;
+            this.normals = normals;
         }
     }
 }

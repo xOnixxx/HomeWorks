@@ -1,4 +1,5 @@
 ﻿using OpenTK.Mathematics;
+using System.Drawing;
 using Util;
 
 namespace rt004
@@ -13,6 +14,19 @@ namespace rt004
 
         private static Scene scene = new Scene();
         private static Camera[] camera;
+
+        public static Dictionary<string, Bitmap> textures = new Dictionary<string, Bitmap>();
+
+        public static void LoadTextures()
+        {
+            var TextureFolder = Directory.GetFiles(@"Textures", "*", SearchOption.AllDirectories);
+            int fCount = TextureFolder.Length;
+
+            foreach (var texture in TextureFolder)
+            {
+                textures.Add(texture, new Bitmap(texture));
+            }
+        }
 
 
         public static void LoadFromJson()

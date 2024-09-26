@@ -1,4 +1,5 @@
 ﻿using OpenTK.Mathematics;
+using System.Drawing;
 
 namespace rt004
 {
@@ -21,6 +22,8 @@ namespace rt004
         public const double EPSILON = 1.0e-6;
         public const double MAXIMON = 1.0e+16;
         public const double EQUILATERAL_CONST = 0.86602540378d;
+
+
         public static List<Vector2d> NRooksSample(Vector2d original, int spp)
         {
             List<Vector2d> samples = new List<Vector2d>(spp);
@@ -231,6 +234,42 @@ namespace rt004
 
             // All normals facing the same way, return true
             return true;
+        }
+
+        public static Vector3d CalculateBarycentric(Vector3d p, Vector3d v0, Vector3d v1, Vector3d v2)
+        {
+            // Compute vectors
+            Vector3d v0v1 = v1 - v0;
+            Vector3d v0v2 = v2 - v0;
+            Vector3d v0p = p - v0;
+
+            // Compute dot products
+            double d00 = Vector3d.Dot(v0v1, v0v1);
+            double d01 = Vector3d.Dot(v0v1, v0v2);
+            double d11 = Vector3d.Dot(v0v2, v0v2);
+            double d20 = Vector3d.Dot(v0p, v0v1);
+            double d21 = Vector3d.Dot(v0p, v0v2);
+
+            // Compute the denominator
+            double denom = d00 * d11 - d01 * d01;
+
+            // Compute barycentric coordinates
+            double v = (d11 * d20 - d01 * d21) / denom;
+            double w = (d00 * d21 - d01 * d20) / denom;
+            double u = 1.0f - v - w;
+
+            return new Vector3d(u, v, w);
+        }
+
+        public static Vector2d MapToUVTriangle(Vector3d p, Vector3d v0, Vector3d v1, Vector3d v2, Vector2d uv0, Vector2d uv1, Vector2d uv2)
+        {
+            // Calculate barycentric coordinates for point p
+            Vector3d barycentricCoords = CalculateBarycentric(p, v0, v1, v2);
+
+            // Interpolate UV coordinates using barycentric coordinates
+            Vector2d uv = barycentricCoords.X * uv0 + barycentricCoords.Y * uv1 + barycentricCoords.Z * uv2;
+
+            return uv;
         }
 
 
